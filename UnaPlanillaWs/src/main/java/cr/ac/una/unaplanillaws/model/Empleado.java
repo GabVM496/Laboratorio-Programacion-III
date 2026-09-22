@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -18,10 +19,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.QueryHint;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
+import jakarta.xml.bind.annotation.XmlTransient;
+import java.math.BigInteger;
+import java.util.Date;
 
 /**
  *
@@ -36,6 +44,21 @@ import jakarta.persistence.Version;
     @NamedQuery(name = "Empleado.findByUsuClave", query = "SELECT e FROM Empleado e WHERE e.usuario = :usuario and e.clave = :clave", hints = @QueryHint(name = "eclipselink.refresh", value = "true"))
 })
 public class Empleado implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "EMP_FINGRESO")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date empFingreso;
+    @Column(name = "EMP_FSALIDA")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date empFsalida;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "EMP_VERSION")
+    private BigInteger empVersion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empId", fetch = FetchType.LAZY)
+    private List<CuentaBancaria> cuentaBancariaList;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -70,17 +93,8 @@ public class Empleado implements Serializable {
     @Column(name = "EMP_CLAVE")
     private String clave;
     @Basic(optional = false)
-    @Column(name = "EMP_FINGRESO")
-    private LocalDate fechaIngreso;
-    @Column(name = "EMP_FSALIDA")
-    private LocalDate fechaSalida;
-    @Basic(optional = false)
     @Column(name = "EMP_ESTADO")
     private String estado;
-    @Version
-    @Basic(optional = false)
-    @Column(name = "EMP_VERSION")
-    private Long version;
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)
     private List<TipoPlanilla> tiposPlanilla;
 
@@ -255,6 +269,39 @@ public class Empleado implements Serializable {
     @Override
     public String toString() {
         return "cr.ac.una.unaplanilla.model.Empleado[ id=" + id + " ]";
+    }
+
+    public Date getEmpFingreso() {
+        return empFingreso;
+    }
+
+    public void setEmpFingreso(Date empFingreso) {
+        this.empFingreso = empFingreso;
+    }
+
+    public Date getEmpFsalida() {
+        return empFsalida;
+    }
+
+    public void setEmpFsalida(Date empFsalida) {
+        this.empFsalida = empFsalida;
+    }
+
+    public BigInteger getEmpVersion() {
+        return empVersion;
+    }
+
+    public void setEmpVersion(BigInteger empVersion) {
+        this.empVersion = empVersion;
+    }
+
+    @XmlTransient
+    public List<CuentaBancaria> getCuentaBancariaList() {
+        return cuentaBancariaList;
+    }
+
+    public void setCuentaBancariaList(List<CuentaBancaria> cuentaBancariaList) {
+        this.cuentaBancariaList = cuentaBancariaList;
     }
     
 }

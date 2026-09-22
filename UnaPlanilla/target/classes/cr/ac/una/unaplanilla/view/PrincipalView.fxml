@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.PrincipalController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1200.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.PrincipalController">
     <center>
         <VBox alignment="CENTER" fillWidth="false" prefHeight="658.0" prefWidth="1200.0" BorderPane.alignment="CENTER">
             <padding>
@@ -50,6 +50,7 @@
                       </AnchorPane>
                       <MFXButton fx:id="btnEmpleados" onAction="#onActionBtnEmpleados" prefHeight="45.0" prefWidth="600.0" rippleAnimateBackground="false" styleClass="jfx-menubutton1" text="Empleados" />
                       <MFXButton fx:id="btnTiposPlanilla" buttonType="RAISED" onAction="#onActionBtnTiposPlanilla" prefHeight="45.0" prefWidth="600.0" rippleAnimateBackground="false" styleClass="jfx-menubutton1" text="Tipos Planilla" />
+                  <MFXButton fx:id="btnBancos" buttonType="RAISED" onAction="#onActionBtnBancos" prefHeight="45.0" prefWidth="600.0" rippleAnimateBackground="false" styleClass="jfx-menubutton1" text="Bancos" />
                </children>
             </VBox>
             <VBox spacing="10.0" VBox.vgrow="NEVER">

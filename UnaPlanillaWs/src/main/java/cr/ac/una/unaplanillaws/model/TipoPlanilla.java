@@ -22,6 +22,8 @@ import jakarta.persistence.NamedQuery;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
+import jakarta.validation.constraints.NotNull;
+import java.math.BigInteger;
 
 /**
  *
@@ -36,6 +38,21 @@ import jakarta.persistence.Version;
     @NamedQuery(name = "TipoPlanilla.findByCodigoDesPlaxMesIdEmpCedula", query = "SELECT t FROM TipoPlanilla t JOIN t.empleados e WHERE UPPER(t.codigo) like :codigo and UPPER(t.descripcion) like :descripcion and UPPER(t.planillaPorMes) like :planillasMes and UPPER(e.id) like :idEmpleado and UPPER(e.cedula) like :cedula")
 })
 public class TipoPlanilla implements Serializable {
+
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "TPLA_PLAXMES")
+    private BigInteger tplaPlaxmes;
+    @Column(name = "TPLA_ANOULTPLA")
+    private BigInteger tplaAnoultpla;
+    @Column(name = "TPLA_MESULTPLA")
+    private BigInteger tplaMesultpla;
+    @Column(name = "TPLA_NUMULTPLA")
+    private BigInteger tplaNumultpla;
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "TPLA_VERSION")
+    private BigInteger tplaVersion;
 
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
@@ -52,21 +69,8 @@ public class TipoPlanilla implements Serializable {
     @Column(name = "TPLA_DESCRIPCION")
     private String descripcion;
     @Basic(optional = false)
-    @Column(name = "TPLA_PLAXMES")
-    private Integer planillaPorMes;
-    @Column(name = "TPLA_ANOULTPLA")
-    private Integer anoUltimaPlanilla;
-    @Column(name = "TPLA_MESULTPLA")
-    private Integer mesUltimaPlanilla;
-    @Column(name = "TPLA_NUMULTPLA")
-    private Integer numeroUltimaPlanilla;
-    @Basic(optional = false)
     @Column(name = "TPLA_ESTADO")
     private String estado;
-    @Version
-    @Basic(optional = false)
-    @Column(name = "TPLA_VERSION")
-    private Long version;
     @JoinTable(name = "PLAM_EMPLEADOSPLANILLA", joinColumns = {
         @JoinColumn(name = "EXP_IDTPLA", referencedColumnName = "TPLA_ID")}, inverseJoinColumns = {
         @JoinColumn(name = "EXP_IDEMP", referencedColumnName = "EMP_ID")})
@@ -195,6 +199,46 @@ public class TipoPlanilla implements Serializable {
     @Override
     public String toString() {
         return "cr.ac.una.unaplanilla.model.TipoPlanilla[ Id=" + id + " ]";
+    }
+
+    public BigInteger getTplaPlaxmes() {
+        return tplaPlaxmes;
+    }
+
+    public void setTplaPlaxmes(BigInteger tplaPlaxmes) {
+        this.tplaPlaxmes = tplaPlaxmes;
+    }
+
+    public BigInteger getTplaAnoultpla() {
+        return tplaAnoultpla;
+    }
+
+    public void setTplaAnoultpla(BigInteger tplaAnoultpla) {
+        this.tplaAnoultpla = tplaAnoultpla;
+    }
+
+    public BigInteger getTplaMesultpla() {
+        return tplaMesultpla;
+    }
+
+    public void setTplaMesultpla(BigInteger tplaMesultpla) {
+        this.tplaMesultpla = tplaMesultpla;
+    }
+
+    public BigInteger getTplaNumultpla() {
+        return tplaNumultpla;
+    }
+
+    public void setTplaNumultpla(BigInteger tplaNumultpla) {
+        this.tplaNumultpla = tplaNumultpla;
+    }
+
+    public BigInteger getTplaVersion() {
+        return tplaVersion;
+    }
+
+    public void setTplaVersion(BigInteger tplaVersion) {
+        this.tplaVersion = tplaVersion;
     }
 
 }
