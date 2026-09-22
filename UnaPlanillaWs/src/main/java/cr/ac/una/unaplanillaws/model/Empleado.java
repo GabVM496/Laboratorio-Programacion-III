@@ -92,7 +92,7 @@ public class Empleado implements Serializable {
     @Column(name = "EMP_VERSION")
     private Long version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empId", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empleado", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CuentaBancaria> cuentaBancariaList;
     
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)

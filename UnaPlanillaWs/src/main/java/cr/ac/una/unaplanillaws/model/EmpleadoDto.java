@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cr.ac.una.unaplanillaws.model;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -11,12 +6,10 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-/**
- *
- * @author Carlos
- */
 public class EmpleadoDto {
 
     private Long id;
@@ -39,13 +32,15 @@ public class EmpleadoDto {
     private Long version;
     private Boolean modificado;
     private LocalDateTime fecha;
-    // TODO
     
-    
+    private List<CuentaBancariaDto> cuentasBancariasList;
+    private List<CuentaBancariaDto> cuentasBancariasEliminadas;
 
     public EmpleadoDto() {
         this.modificado = false;
         this.fecha = LocalDateTime.now();
+        this.cuentasBancariasList = new ArrayList<>();
+        this.cuentasBancariasEliminadas = new ArrayList<>();
     }
 
     public EmpleadoDto(Empleado empleado) {
@@ -71,135 +66,118 @@ public class EmpleadoDto {
         this.fecha = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    public Long getId() { 
+        return id; 
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
-    public String getNombre() {
-        return nombre;
+    public String getNombre() { 
+        return nombre; 
     }
-
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        this.nombre = nombre; 
+    }
+    public String getPrimerApellido() { 
+        return primerApellido; 
+    }
+    public void setPrimerApellido(String primerApellido) { 
+        this.primerApellido = primerApellido; 
+    }
+    public String getSegundoApellido() { 
+        return segundoApellido; 
+    }
+    public void setSegundoApellido(String segundoApellido) { 
+        this.segundoApellido = segundoApellido; 
+    }
+    public String getCedula() { 
+        return cedula; 
+    }
+    public void setCedula(String cedula) { 
+        this.cedula = cedula; 
+    }
+    public String getGenero() { 
+        return genero; 
+    }
+    public void setGenero(String genero) { 
+        this.genero = genero; 
+    }
+    public String getCorreo() { 
+        return correo; 
+    }
+    public void setCorreo(String correo) { 
+        this.correo = correo; 
+    }
+    public Boolean getAdministrador() { 
+        return administrador; 
+    }
+    public void setAdministrador(Boolean administrador) { 
+        this.administrador = administrador; 
+    }
+    public String getUsuario() { 
+        return usuario; 
+    }
+    public void setUsuario(String usuario) { 
+        this.usuario = usuario; 
+    }
+    public String getClave() { 
+        return clave; 
+    }
+    public void setClave(String clave) { 
+        this.clave = clave; 
+    }
+    public LocalDate getFechaIngreso() { 
+        return fechaIngreso; 
+    }
+    public void setFechaIngreso(LocalDate fechaIngreso) { 
+        this.fechaIngreso = fechaIngreso; 
+    }
+    public LocalDate getFechaSalida() { 
+        return fechaSalida; 
+    }
+    public void setFechaSalida(LocalDate fechaSalida) { 
+        this.fechaSalida = fechaSalida; 
+    }
+    public Boolean getActivo() { 
+        return activo; 
+    }
+    public void setActivo(Boolean activo) { 
+        this.activo = activo; 
+    }
+    public Boolean getModificado() { 
+        return modificado; 
+    }
+    public void setModificado(Boolean modificado) { 
+        this.modificado = modificado; 
+    }
+    public LocalDateTime getFecha() { 
+        return fecha; 
+    }
+    public void setFecha(LocalDateTime fecha) { 
+        this.fecha = fecha; 
+    }
+    public Long getVersion() { 
+        return version; 
+    }
+    public void setVersion(Long version) { 
+        this.version = version; 
     }
 
-    public String getPrimerApellido() {
-        return primerApellido;
+    public List<CuentaBancariaDto> getCuentasBancariasList() {
+        return cuentasBancariasList;
     }
 
-    public void setPrimerApellido(String primerApellido) {
-        this.primerApellido = primerApellido;
+    public void setCuentasBancariasList(List<CuentaBancariaDto> cuentasBancariasList) {
+        this.cuentasBancariasList = cuentasBancariasList;
     }
 
-    public String getSegundoApellido() {
-        return segundoApellido;
+    public List<CuentaBancariaDto> getCuentasBancariasEliminadas() {
+        return cuentasBancariasEliminadas;
     }
 
-    public void setSegundoApellido(String segundoApellido) {
-        this.segundoApellido = segundoApellido;
+    public void setCuentasBancariasEliminadas(List<CuentaBancariaDto> cuentasBancariasEliminadas) {
+        this.cuentasBancariasEliminadas = cuentasBancariasEliminadas;
     }
-
-    public String getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
-
-    public String getGenero() {
-        return genero;
-    }
-
-    public void setGenero(String genero) {
-        this.genero = genero;
-    }
-
-    public String getCorreo() {
-        return correo;
-    }
-
-    public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public Boolean getAdministrador() {
-        return administrador;
-    }
-
-    public void setAdministrador(Boolean administrador) {
-        this.administrador = administrador;
-    }
-
-    public String getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(String usuario) {
-        this.usuario = usuario;
-    }
-
-    public String getClave() {
-        return clave;
-    }
-
-    public void setClave(String clave) {
-        this.clave = clave;
-    }
-
-    public LocalDate getFechaIngreso() {
-        return fechaIngreso;
-    }
-
-    public void setFechaIngreso(LocalDate fechaIngreso) {
-        this.fechaIngreso = fechaIngreso;
-    }
-
-    public LocalDate getFechaSalida() {
-        return fechaSalida;
-    }
-
-    public void setFechaSalida(LocalDate fechaSalida) {
-        this.fechaSalida = fechaSalida;
-    }
-
-    public Boolean getActivo() {
-        return activo;
-    }
-
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
-    
-    public Boolean getModificado() {
-        return modificado;
-    }
-
-    public void setModificado(Boolean modificado) {
-        this.modificado = modificado;
-    }
-
-    public LocalDateTime getFecha() {
-        return fecha;
-    }
-
-    public void setFecha(LocalDateTime fecha) {
-        this.fecha = fecha;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
-    }
-
-    // TODO
 
     @Override
     public int hashCode() {
@@ -210,15 +188,9 @@ public class EmpleadoDto {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+        if (this == obj) { return true; }
+        if (obj == null) { return false; }
+        if (getClass() != obj.getClass()) { return false; }
         final EmpleadoDto other = (EmpleadoDto) obj;
         return Objects.equals(this.id, other.id);
     }
@@ -227,5 +199,4 @@ public class EmpleadoDto {
     public String toString() {
         return "EmpleadoDto{" + "id=" + id + ", nombre=" + nombre + ", primerApellido=" + primerApellido + ", segundoApellido=" + segundoApellido + ", cedula=" + cedula + '}';
     }
-
 }

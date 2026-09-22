@@ -2,6 +2,8 @@ package cr.ac.una.unaplanilla.model;
 
 import jakarta.json.bind.annotation.JsonbTransient;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -9,11 +11,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-/**
- *
- * @author cbcar
- */
 public class EmpleadoDto {
 
     private StringProperty id;
@@ -31,7 +31,8 @@ public class EmpleadoDto {
     private BooleanProperty activo;
     private Long version;
     private Boolean modificado;
-    // TODO
+    private ObservableList<CuentaBancariaDto> cuentasBancariasList;
+    private List<CuentaBancariaDto> cuentasBancariasEliminadas;
 
     public EmpleadoDto() {
         this.id = new SimpleStringProperty("");
@@ -48,8 +49,10 @@ public class EmpleadoDto {
         this.fechaSalida = new SimpleObjectProperty<>();
         this.activo = new SimpleBooleanProperty(true);
         this.modificado = false;
+        this.cuentasBancariasList = FXCollections.observableArrayList();
+        this.cuentasBancariasEliminadas = new ArrayList<>();
     }
-
+    
     public Long getId() {
         if (this.id.get() != null && !this.id.get().isBlank()) {
             return Long.valueOf(this.id.get());
@@ -238,6 +241,22 @@ public class EmpleadoDto {
     public void setModificado(Boolean modificado) {
         this.modificado = modificado;
     }
+    
+    public ObservableList<CuentaBancariaDto> getCuentasBancariasList() {
+        return cuentasBancariasList;
+    }
+
+    public void setCuentasBancariasList(List<CuentaBancariaDto> cuentasBancariasList) {
+        this.cuentasBancariasList = FXCollections.observableArrayList(cuentasBancariasList);
+    }
+
+    public List<CuentaBancariaDto> getCuentasBancariasEliminadas() {
+        return cuentasBancariasEliminadas;
+    }
+
+    public void setCuentasBancariasEliminadas(List<CuentaBancariaDto> cuentasBancariasEliminadas) {
+        this.cuentasBancariasEliminadas = cuentasBancariasEliminadas;
+    }
 
     @Override
     public int hashCode() {
@@ -265,5 +284,4 @@ public class EmpleadoDto {
     public String toString() {
         return "EmpleadoDto{" + "id=" + id + ", nombre=" + nombre + ", primerApellido=" + primerApellido + ", cedula=" + cedula + '}';
     }
-
 }
