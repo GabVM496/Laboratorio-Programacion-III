@@ -31,12 +31,12 @@ public class BancoDto {
 
     public BancoDto(Banco banco) {
         this();
-        this.id = banco.getBanId() != null ? banco.getBanId().longValue() : null;
-        this.nombre = banco.getBanNombre();
-        this.cobraComision = banco.getBanRebajocomision() != null && banco.getBanRebajocomision().equals("E");
-        this.comision = banco.getBanComisiontran() != null ? banco.getBanComisiontran().longValue() : null;
-        this.activo = banco.getBanEstado() != null && banco.getBanEstado().equals("A");
-        this.version = banco.getBanVersion() != null ? banco.getBanVersion().longValue() : null;
+        this.id = banco.getId();
+        this.nombre = banco.getNombre();
+        this.cobraComision = banco.getRebajoComision() != null && banco.getRebajoComision().equals("E");
+        this.comision = banco.getComisionTransferencia();
+        this.activo = banco.getEstado() != null && banco.getEstado().equals("A");
+        this.version = banco.getVersion();
     }
 
     public Long getId() {

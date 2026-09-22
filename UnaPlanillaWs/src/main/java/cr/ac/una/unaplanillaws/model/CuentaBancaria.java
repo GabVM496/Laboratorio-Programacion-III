@@ -1,193 +1,194 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cr.ac.una.unaplanillaws.model;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.util.Objects;
 
-/**
- *
- * @author USUARIO UNA PZ
- */
 @Entity
-@Table(name = "PLAM_CUENTASBANCARIAS")
+@Table(name = "PLAM_CUENTASBANCARIAS", schema = "UNA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "CuentaBancaria.findAll", query = "SELECT c FROM CuentaBancaria c"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeId", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeId = :cbeId"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeAgencia", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeAgencia = :cbeAgencia"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeAdicional", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeAdicional = :cbeAdicional"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeNumerocuenta", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeNumerocuenta = :cbeNumerocuenta"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeTipo", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeTipo = :cbeTipo"),
-    @NamedQuery(name = "CuentaBancaria.findByCbePrincipal", query = "SELECT c FROM CuentaBancaria c WHERE c.cbePrincipal = :cbePrincipal"),
-    @NamedQuery(name = "CuentaBancaria.findByCbeVersion", query = "SELECT c FROM CuentaBancaria c WHERE c.cbeVersion = :cbeVersion")})
+    @NamedQuery(name = "CuentaBancaria.findById", query = "SELECT c FROM CuentaBancaria c WHERE c.id = :id")
+})
 public class CuentaBancaria implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+
     @Id
+    @SequenceGenerator(name = "PLAM_CUENTASBANCARIAS_CBE_ID_GENERATOR", sequenceName = "una.PLAM_CUENTASBANCARIAS_SEQ01", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PLAM_CUENTASBANCARIAS_CBE_ID_GENERATOR")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "CBE_ID")
-    private BigDecimal cbeId;
+    private Long id;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "CBE_AGENCIA")
-    private BigInteger cbeAgencia;
+    private Long agencia;
+
     @Column(name = "CBE_ADICIONAL")
-    private BigInteger cbeAdicional;
+    private Long adicional;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "CBE_NUMEROCUENTA")
-    private BigInteger cbeNumerocuenta;
+    private Long numeroCuenta;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "CBE_TIPO")
-    private String cbeTipo;
+    private String tipo;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "CBE_PRINCIPAL")
-    private String cbePrincipal;
+    private String principal;
+
+    @Version
     @Basic(optional = false)
     @NotNull
     @Column(name = "CBE_VERSION")
-    private BigInteger cbeVersion;
+    private Long version;
+
     @JoinColumn(name = "BAN_ID", referencedColumnName = "BAN_ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Banco banId;
+    private Banco banco;
+
     @JoinColumn(name = "EMP_ID", referencedColumnName = "EMP_ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    private Empleado empId;
+    private Empleado empleado;
 
     public CuentaBancaria() {
     }
 
-    public CuentaBancaria(BigDecimal cbeId) {
-        this.cbeId = cbeId;
+    public CuentaBancaria(Long id) {
+        this.id = id;
     }
 
-    public CuentaBancaria(BigDecimal cbeId, BigInteger cbeAgencia, BigInteger cbeNumerocuenta, String cbeTipo, String cbePrincipal, BigInteger cbeVersion) {
-        this.cbeId = cbeId;
-        this.cbeAgencia = cbeAgencia;
-        this.cbeNumerocuenta = cbeNumerocuenta;
-        this.cbeTipo = cbeTipo;
-        this.cbePrincipal = cbePrincipal;
-        this.cbeVersion = cbeVersion;
+    public CuentaBancaria(CuentaBancariaDto cuentaBancariaDto) {
+        this.id = cuentaBancariaDto.getId();
+        actualizar(cuentaBancariaDto);
     }
 
-    public BigDecimal getCbeId() {
-        return cbeId;
+    public void actualizar(CuentaBancariaDto cuentaBancariaDto) {
+        this.agencia = cuentaBancariaDto.getAgencia();
+        this.adicional = cuentaBancariaDto.getAdicional();
+        this.numeroCuenta = cuentaBancariaDto.getNumeroCuenta();
+        this.tipo = cuentaBancariaDto.getTipo();
+        this.principal = (cuentaBancariaDto.getPrincipal() != null && cuentaBancariaDto.getPrincipal()) ? "S" : "N";
+        this.version = cuentaBancariaDto.getVersion();
     }
 
-    public void setCbeId(BigDecimal cbeId) {
-        this.cbeId = cbeId;
+    public Long getId() {
+        return id;
     }
 
-    public BigInteger getCbeAgencia() {
-        return cbeAgencia;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setCbeAgencia(BigInteger cbeAgencia) {
-        this.cbeAgencia = cbeAgencia;
+    public Long getAgencia() {
+        return agencia;
     }
 
-    public BigInteger getCbeAdicional() {
-        return cbeAdicional;
+    public void setAgencia(Long agencia) {
+        this.agencia = agencia;
     }
 
-    public void setCbeAdicional(BigInteger cbeAdicional) {
-        this.cbeAdicional = cbeAdicional;
+    public Long getAdicional() {
+        return adicional;
     }
 
-    public BigInteger getCbeNumerocuenta() {
-        return cbeNumerocuenta;
+    public void setAdicional(Long adicional) {
+        this.adicional = adicional;
     }
 
-    public void setCbeNumerocuenta(BigInteger cbeNumerocuenta) {
-        this.cbeNumerocuenta = cbeNumerocuenta;
+    public Long getNumeroCuenta() {
+        return numeroCuenta;
     }
 
-    public String getCbeTipo() {
-        return cbeTipo;
+    public void setNumeroCuenta(Long numeroCuenta) {
+        this.numeroCuenta = numeroCuenta;
     }
 
-    public void setCbeTipo(String cbeTipo) {
-        this.cbeTipo = cbeTipo;
+    public String getTipo() {
+        return tipo;
     }
 
-    public String getCbePrincipal() {
-        return cbePrincipal;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 
-    public void setCbePrincipal(String cbePrincipal) {
-        this.cbePrincipal = cbePrincipal;
+    public String getPrincipal() {
+        return principal;
     }
 
-    public BigInteger getCbeVersion() {
-        return cbeVersion;
+    public void setPrincipal(String principal) {
+        this.principal = principal;
     }
 
-    public void setCbeVersion(BigInteger cbeVersion) {
-        this.cbeVersion = cbeVersion;
+    public Long getVersion() {
+        return version;
     }
 
-    public Banco getBanId() {
-        return banId;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
-    public void setBanId(Banco banId) {
-        this.banId = banId;
+    public Banco getBanco() {
+        return banco;
     }
 
-    public Empleado getEmpId() {
-        return empId;
+    public void setBanco(Banco banco) {
+        this.banco = banco;
     }
 
-    public void setEmpId(Empleado empId) {
-        this.empId = empId;
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (cbeId != null ? cbeId.hashCode() : 0);
-        return hash;
+        return Objects.hash(id);
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CuentaBancaria)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        CuentaBancaria other = (CuentaBancaria) object;
-        if ((this.cbeId == null && other.cbeId != null) || (this.cbeId != null && !this.cbeId.equals(other.cbeId))) {
-            return false;
-        }
-        return true;
+        CuentaBancaria other = (CuentaBancaria) obj;
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
     public String toString() {
-        return "cr.ac.una.unaplanillaws.model.CuentaBancaria[ cbeId=" + cbeId + " ]";
+        return "cr.ac.una.unaplanillaws.model.CuentaBancaria[ id=" + id + " ]";
     }
-    
 }

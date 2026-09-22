@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package cr.ac.una.unaplanillaws.model;
 
 import jakarta.persistence.Basic;
@@ -9,166 +5,171 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlTransient;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-/**
- *
- * @author USUARIO UNA PZ
- */
 @Entity
-@Table(name = "PLAM_BANCOS")
+@Table(name = "PLAM_BANCOS", schema = "UNA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Banco.findAll", query = "SELECT b FROM Banco b"),
-    @NamedQuery(name = "Banco.findByBanId", query = "SELECT b FROM Banco b WHERE b.banId = :banId"),
-    @NamedQuery(name = "Banco.findByBanNombre", query = "SELECT b FROM Banco b WHERE b.banNombre = :banNombre"),
-    @NamedQuery(name = "Banco.findByBanRebajocomision", query = "SELECT b FROM Banco b WHERE b.banRebajocomision = :banRebajocomision"),
-    @NamedQuery(name = "Banco.findByBanComisiontran", query = "SELECT b FROM Banco b WHERE b.banComisiontran = :banComisiontran"),
-    @NamedQuery(name = "Banco.findByBanEstado", query = "SELECT b FROM Banco b WHERE b.banEstado = :banEstado"),
-    @NamedQuery(name = "Banco.findByBanVersion", query = "SELECT b FROM Banco b WHERE b.banVersion = :banVersion")})
+    @NamedQuery(name = "Banco.findById", query = "SELECT b FROM Banco b WHERE b.id = :id"),
+    @NamedQuery(name = "Banco.findByNombre", query = "SELECT b FROM Banco b WHERE b.nombre = :nombre")
+})
 public class Banco implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+
     @Id
+    @SequenceGenerator(name = "PLAM_BANCOS_BAN_ID_GENERATOR", sequenceName = "una.PLAM_BANCOS_SEQ01", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PLAM_BANCOS_BAN_ID_GENERATOR")
     @Basic(optional = false)
-    @NotNull
     @Column(name = "BAN_ID")
-    private BigDecimal banId;
+    private Long id;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 80)
     @Column(name = "BAN_NOMBRE")
-    private String banNombre;
+    private String nombre;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "BAN_REBAJOCOMISION")
-    private String banRebajocomision;
+    private String rebajoComision;
+
     @Basic(optional = false)
     @NotNull
     @Column(name = "BAN_COMISIONTRAN")
-    private BigInteger banComisiontran;
+    private Long comisionTransferencia;
+
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "BAN_ESTADO")
-    private String banEstado;
+    private String estado;
+
+    @Version
     @Basic(optional = false)
     @NotNull
     @Column(name = "BAN_VERSION")
-    private BigInteger banVersion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "banId", fetch = FetchType.LAZY)
-    private List<CuentaBancaria> cuentaBancariaList;
+    private Long version;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "banco", fetch = FetchType.LAZY)
+    private List<CuentaBancaria> cuentasBancarias = new ArrayList<>();
 
     public Banco() {
     }
 
-    public Banco(BigDecimal banId) {
-        this.banId = banId;
+    public Banco(Long id) {
+        this.id = id;
     }
 
-    public Banco(BigDecimal banId, String banNombre, String banRebajocomision, BigInteger banComisiontran, String banEstado, BigInteger banVersion) {
-        this.banId = banId;
-        this.banNombre = banNombre;
-        this.banRebajocomision = banRebajocomision;
-        this.banComisiontran = banComisiontran;
-        this.banEstado = banEstado;
-        this.banVersion = banVersion;
+    public Banco(BancoDto bancoDto) {
+        this.id = bancoDto.getId();
+        actualizar(bancoDto);
     }
 
-    public BigDecimal getBanId() {
-        return banId;
+    public void actualizar(BancoDto bancoDto) {
+        this.nombre = bancoDto.getNombre();
+        this.rebajoComision = (bancoDto.getCobraComision() != null && bancoDto.getCobraComision()) ? "E" : "M";
+        this.comisionTransferencia = bancoDto.getComision();
+        this.estado = (bancoDto.getActivo() != null && bancoDto.getActivo()) ? "A" : "I";
+        this.version = bancoDto.getVersion();
     }
 
-    public void setBanId(BigDecimal banId) {
-        this.banId = banId;
+    public Long getId() {
+        return id;
     }
 
-    public String getBanNombre() {
-        return banNombre;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setBanNombre(String banNombre) {
-        this.banNombre = banNombre;
+    public String getNombre() {
+        return nombre;
     }
 
-    public String getBanRebajocomision() {
-        return banRebajocomision;
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
-    public void setBanRebajocomision(String banRebajocomision) {
-        this.banRebajocomision = banRebajocomision;
+    public String getRebajoComision() {
+        return rebajoComision;
     }
 
-    public BigInteger getBanComisiontran() {
-        return banComisiontran;
+    public void setRebajoComision(String rebajoComision) {
+        this.rebajoComision = rebajoComision;
     }
 
-    public void setBanComisiontran(BigInteger banComisiontran) {
-        this.banComisiontran = banComisiontran;
+    public Long getComisionTransferencia() {
+        return comisionTransferencia;
     }
 
-    public String getBanEstado() {
-        return banEstado;
+    public void setComisionTransferencia(Long comisionTransferencia) {
+        this.comisionTransferencia = comisionTransferencia;
     }
 
-    public void setBanEstado(String banEstado) {
-        this.banEstado = banEstado;
+    public String getEstado() {
+        return estado;
     }
 
-    public BigInteger getBanVersion() {
-        return banVersion;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
-    public void setBanVersion(BigInteger banVersion) {
-        this.banVersion = banVersion;
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     @XmlTransient
-    public List<CuentaBancaria> getCuentaBancariaList() {
-        return cuentaBancariaList;
+    public List<CuentaBancaria> getCuentasBancarias() {
+        return cuentasBancarias;
     }
 
-    public void setCuentaBancariaList(List<CuentaBancaria> cuentaBancariaList) {
-        this.cuentaBancariaList = cuentaBancariaList;
+    public void setCuentasBancarias(List<CuentaBancaria> cuentasBancarias) {
+        this.cuentasBancarias = cuentasBancarias;
     }
 
     @Override
     public int hashCode() {
-        int hash = 0;
-        hash += (banId != null ? banId.hashCode() : 0);
-        return hash;
+        return Objects.hash(id);
     }
 
     @Override
-    public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof Banco)) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
-        Banco other = (Banco) object;
-        if ((this.banId == null && other.banId != null) || (this.banId != null && !this.banId.equals(other.banId))) {
-            return false;
-        }
-        return true;
+        Banco other = (Banco) obj;
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
     public String toString() {
-        return "cr.ac.una.unaplanillaws.model.Banco[ banId=" + banId + " ]";
+        return "cr.ac.una.unaplanillaws.model.Banco[ id=" + id + " ]";
     }
-    
 }
