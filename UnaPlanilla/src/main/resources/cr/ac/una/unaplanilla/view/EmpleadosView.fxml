@@ -29,7 +29,7 @@
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="5.0">
                <children>
                   <Label prefHeight="45.0" prefWidth="268.0" styleClass="jfx-titulo-label" text="Control de Empleados" />
-                  <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
+                  <TabPane fx:id="tbpControlEmpleadosPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS">
                     <tabs>
                       <Tab fx:id="tbpControlEmpleados" text="Control Empleados">
                         <content>
@@ -40,7 +40,7 @@
                                           <HBox styleClass="jfx-contenedor-principal" VBox.vgrow="NEVER">
                                              <children>
                                                 <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" HBox.hgrow="ALWAYS">
-                                                   <children>
+                                                    <children>
                                                       <MFXTextField fx:id="txtId" floatingText="Id" layoutX="10.0" layoutY="61.0" maxWidth="1.7976931348623157E308" onKeyPressed="#onKeyPressedTxtId" styleClass="jfx-txt-id" VBox.vgrow="NEVER" />
                                                       <MFXTextField fx:id="txtNombre" floatingText="Nombre" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
                                                       <MFXTextField fx:id="txtPApellido" floatingText="Primer apellido" layoutX="10.0" layoutY="61.0" maxWidth="1.7976931348623157E308" VBox.vgrow="NEVER" />
@@ -111,8 +111,8 @@
                                              <children>
                                                 <VBox spacing="10.0" HBox.hgrow="ALWAYS">
                                                    <children>
-                                                      <MFXTextField fx:id="txtNumeroAgencia" allowEdit="false" floatingText="Numero de Agencia" maxWidth="1.7976931348623157E308" onKeyPressed="#onKeyPressedTxtIdEmpleado" prefHeight="22.0" prefWidth="440.0" />
-                                                      <MFXTextField fx:id="txtNumeroCuenta" allowEdit="false" floatingText="Numero de Cuenta " maxWidth="1.7976931348623157E308" onKeyPressed="#onKeyPressedTxtIdEmpleado" prefHeight="22.0" prefWidth="440.0" />
+                                                      <MFXTextField fx:id="txtNumeroAgencia" floatingText="Numero de Agencia" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
+                                                      <MFXTextField fx:id="txtNumeroCuenta" floatingText="Numero de Cuenta" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
                                                    </children>
                                                 </VBox>
                                                 <VBox spacing="30.0">
@@ -127,10 +127,19 @@
                                              </VBox.margin>
                                           </HBox>
                                           <Label text="Tipo de Cuenta:" />
-                                          <HBox spacing="10.0">
+                                          <HBox alignment="CENTER_LEFT" spacing="20.0">
                                              <children>
-                                                <MFXRadioButton fx:id="rdbCuentaCorriente" text="Corriente" />
-                                                <MFXRadioButton fx:id="rdbCuentaAhorros" text="Ahorros" />
+                                                <MFXRadioButton fx:id="rdbCuentaCorriente" selected="true" text="Corriente">
+                                                   <toggleGroup>
+                                                      <ToggleGroup fx:id="tggTipoCuenta" />
+                                                   </toggleGroup>
+                                                </MFXRadioButton>
+                                                <MFXRadioButton fx:id="rdbCuentaAhorros" text="Ahorros" toggleGroup="$tggTipoCuenta" />
+                                                <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                                   <children>
+                                                      <MFXButton fx:id="btnAgregarCuenta" onAction="#onActionBtnAgregarCuenta" prefHeight="30.0" prefWidth="100.0" styleClass="jfx-btn-nuevo" text="Agregar" />
+                                                   </children>
+                                                </HBox>
                                              </children>
                                           </HBox>
                                           <Separator prefHeight="3.0" prefWidth="550.0">

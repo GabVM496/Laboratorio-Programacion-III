@@ -3,6 +3,7 @@ package cr.ac.una.unaplanilla.controller;
 import cr.ac.una.unaplanilla.model.BancoDto;
 import cr.ac.una.unaplanilla.model.CuentaBancariaDto;
 import cr.ac.una.unaplanilla.model.EmpleadoDto;
+import cr.ac.una.unaplanilla.service.BancoService;
 import cr.ac.una.unaplanilla.service.EmpleadoService;
 import cr.ac.una.unaplanilla.util.BindingUtils;
 import cr.ac.una.unaplanilla.util.FlowController;
@@ -27,6 +28,8 @@ import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -44,7 +47,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.util.converter.NumberStringConverter;
+import javafx.util.StringConverter;
 
 public class EmpleadosController extends Controller implements Initializable {
 
@@ -147,6 +150,8 @@ public class EmpleadosController extends Controller implements Initializable {
         if (txtNumeroAgencia != null) txtNumeroAgencia.delegateSetTextFormatter(Formato.getInstance().integerFormat());
         if (txtNumeroCuenta != null) txtNumeroCuenta.delegateSetTextFormatter(Formato.getInstance().integerFormat());
 
+        cargarBancos(); 
+
         this.empleadoDto = new EmpleadoDto();
         bindEmpleado();
 
@@ -156,8 +161,31 @@ public class EmpleadosController extends Controller implements Initializable {
         cargarValoresDefecto();
         indicarRequeridos();
 
+        cmbBanco.setConverter(new StringConverter<BancoDto>() {
+            @Override
+            public String toString(BancoDto banco) {
+                return banco != null ? banco.getNombre() : "";
+            }
+            @Override
+            public BancoDto fromString(String string) {
+                return null; 
+            }
+        });
+
         tbcNumeroCuenta.setCellValueFactory((cd) -> cd.getValue().getNumeroCuentaProperty());
-        tbcNombreBanco.setCellValueFactory((cd) -> cd.getValue().getBancoIdProperty());
+        
+        tbcNombreBanco.setCellValueFactory((cd) -> {
+            Long bancoId = cd.getValue().getBancoId();
+            if (bancoId != null && cmbBanco.getItems() != null) {
+                for (BancoDto b : cmbBanco.getItems()) {
+                    if (b.getId().equals(bancoId)) {
+                        return new SimpleStringProperty(b.getNombre());
+                    }
+                }
+            }
+            return new SimpleStringProperty("");
+        });
+        
         tbcEliminar.setCellValueFactory((cd) -> new SimpleBooleanProperty(cd.getValue() != null));
         tbcEliminar.setCellFactory((cd) -> new ButtonCell());
 
@@ -165,12 +193,35 @@ public class EmpleadosController extends Controller implements Initializable {
             if (newValue != null) {
                 this.cuentaBancariaDto = newValue;
                 this.cuentaBancariaProperty.setValue(this.cuentaBancariaDto);
+                if (newValue.getBancoId() != null && cmbBanco != null) {
+                    for (int i = 0; i < cmbBanco.getItems().size(); i++) {
+                        if (cmbBanco.getItems().get(i).getId().equals(newValue.getBancoId())) {
+                            cmbBanco.getSelectionModel().selectIndex(i);
+                            break;
+                        }
+                    }
+                }
             }
         });
     }
 
     @Override
     public void initialize() {
+    }
+
+    private void cargarBancos() {
+        try {
+            BancoService bancoService = new BancoService();
+            Respuesta respuesta = bancoService.getBancos();
+            if (respuesta.getEstado()) {
+                List<BancoDto> bancos = (List<BancoDto>) respuesta.getResultado("Bancos");
+                cmbBanco.setItems(FXCollections.observableArrayList(bancos));
+            } else {
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Cargar Bancos", getStage(), respuesta.getMensaje());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(EmpleadosController.class.getName()).log(Level.SEVERE, "Error cargando bancos.", ex);
+        }
     }
 
     private void cargarValoresDefecto() {
@@ -188,19 +239,17 @@ public class EmpleadosController extends Controller implements Initializable {
     }
 
     private void limpiarCuentaBancaria() {
-        tbvCuentas.getSelectionModel().select(null);
+        tbvCuentas.getSelectionModel().clearSelection();
         this.cuentaBancariaDto = new CuentaBancariaDto();
         this.cuentaBancariaProperty.setValue(this.cuentaBancariaDto);
-        if (cmbBanco != null) cmbBanco.getSelectionModel().clearSelection();
-        if (txtNumeroCuenta != null) txtNumeroCuenta.clear();
-        if (txtNumeroAgencia != null) txtNumeroAgencia.clear();
+        if (cmbBanco != null) {
+            cmbBanco.getSelectionModel().clearSelection();
+        }
     }
 
     private void cargarCuentasBancarias() {
         tbvCuentas.getItems().clear();
-        if (this.empleadoDto.getCuentasBancariasList() != null) {
-            tbvCuentas.setItems(this.empleadoDto.getCuentasBancariasList());
-        }
+        tbvCuentas.setItems(this.empleadoDto.getCuentasBancariasList());
         tbvCuentas.refresh();
     }
 
@@ -247,6 +296,30 @@ public class EmpleadosController extends Controller implements Initializable {
 
     private void bindCuentaBancaria() {
         try {
+            StringConverter<Long> longConverter = new StringConverter<Long>() {
+                @Override
+                public String toString(Long object) {
+                    return object == null ? "" : object.toString();
+                }
+                @Override
+                public Long fromString(String string) {
+                    if (string == null || string.isBlank()) return null;
+                    try { return Long.valueOf(string); } catch (NumberFormatException e) { return null; }
+                }
+            };
+
+            StringConverter<Integer> intConverter = new StringConverter<Integer>() {
+                @Override
+                public String toString(Integer object) {
+                    return object == null ? "" : object.toString();
+                }
+                @Override
+                public Integer fromString(String string) {
+                    if (string == null || string.isBlank()) return null;
+                    try { return Integer.valueOf(string); } catch (NumberFormatException e) { return null; }
+                }
+            };
+
             cuentaBancariaProperty.addListener((obs, oldVal, newVal) -> {
                 if (oldVal != null) {
                     txtNumeroCuenta.textProperty().unbindBidirectional(oldVal.getNumeroCuentaProperty());
@@ -257,8 +330,8 @@ public class EmpleadosController extends Controller implements Initializable {
                     }
                 }
                 if (newVal != null) {
-                    txtNumeroCuenta.textProperty().bindBidirectional(newVal.getNumeroCuentaProperty(), new javafx.util.converter.LongStringConverter());
-                    txtNumeroAgencia.textProperty().bindBidirectional(newVal.getAgenciaProperty(), new javafx.util.converter.IntegerStringConverter());
+                    txtNumeroCuenta.textProperty().bindBidirectional(newVal.getNumeroCuentaProperty(), longConverter);
+                    txtNumeroAgencia.textProperty().bindBidirectional(newVal.getAgenciaProperty(), intConverter);
                     chkCuentaPrincipal.selectedProperty().bindBidirectional(newVal.getPrincipalProperty());
                     if (tggTipoCuenta != null) {
                         BindingUtils.bindToggleGroupToProperty(tggTipoCuenta, newVal.getTipoProperty());
@@ -347,22 +420,33 @@ public class EmpleadosController extends Controller implements Initializable {
 
     @FXML
     private void onActionBtnAgregarCuenta(ActionEvent event) {
-        if (cmbBanco.getSelectionModel().getSelectedItem() != null) {
-            this.cuentaBancariaDto.setBancoId(cmbBanco.getSelectionModel().getSelectedItem().getId());
-        }
-
-        if (this.cuentaBancariaDto.getNumeroCuenta() == null || this.cuentaBancariaDto.getBancoId() == null) {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "Debe ingresar el número de cuenta y seleccionar un banco.");
+        if (cmbBanco.getSelectionModel().getSelectedItem() == null) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "Debe seleccionar un banco.");
             return;
         }
 
-        if (tbvCuentas.getItems().stream().noneMatch(c -> c.getNumeroCuenta().equals(this.cuentaBancariaDto.getNumeroCuenta()))) {
+        if (txtNumeroCuenta.getText() == null || txtNumeroCuenta.getText().isBlank()) {
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "Debe ingresar el número de cuenta.");
+            return;
+        }
+
+        this.cuentaBancariaDto.setBancoId(cmbBanco.getSelectionModel().getSelectedItem().getId());
+
+        boolean exists = tbvCuentas.getItems().contains(this.cuentaBancariaDto);
+
+        if (exists) {
             this.cuentaBancariaDto.setModificado(true);
-            tbvCuentas.getItems().add(this.cuentaBancariaDto);
             tbvCuentas.refresh();
             limpiarCuentaBancaria();
         } else {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "La cuenta ya existe en la lista.");
+            if (tbvCuentas.getItems().stream().anyMatch(c -> c.getNumeroCuenta().equals(this.cuentaBancariaDto.getNumeroCuenta()))) {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "El número de cuenta ya existe en la lista.");
+                return;
+            }
+            this.cuentaBancariaDto.setModificado(true);
+            tbvCuentas.getItems().add(this.cuentaBancariaDto); 
+            tbvCuentas.refresh();
+            limpiarCuentaBancaria();
         }
     }
 
@@ -439,11 +523,13 @@ public class EmpleadosController extends Controller implements Initializable {
             if (this.empleadoDto.getId() == null) {
                 new Mensaje().showModal(Alert.AlertType.WARNING, "Cuentas Bancarias", getStage(),
                         "Debe cargar un empleado antes de gestionar cuentas bancarias.");
-                if (tbpControlEmpleadosPane != null) {
-                    tbpControlEmpleadosPane.getSelectionModel().select(tbpControlEmpleados);
-                }
+                tbpControlEmpleadosPane.getSelectionModel().select(tbpControlEmpleados);
             }
         }
+    }
+
+    @FXML
+    private void onKeyPressedTxtIdEmpleado(KeyEvent event) {
     }
 
     private class ButtonCell extends TableCell<CuentaBancariaDto, Boolean> {

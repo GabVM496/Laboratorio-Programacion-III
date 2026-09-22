@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cr.ac.una.unaplanillaws.service;
 
 import java.util.List;
@@ -22,10 +17,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-/**
- *
- * @author Carlos
- */
 @Stateless
 @LocalBean
 public class EmpleadoService {
@@ -108,6 +99,7 @@ public class EmpleadoService {
                 empleado = em.merge(empleado);
             } else {
                 empleado = new Empleado(empleadoDto);
+                em.persist(empleado);
             }
             em.flush();
             return new Respuesta(true, CodigoRespuesta.CORRECTO, "", "", "Empleado", new EmpleadoDto(empleado));
@@ -128,6 +120,7 @@ public class EmpleadoService {
             } else {
                 return new Respuesta(false, CodigoRespuesta.ERROR_NOENCONTRADO, "Debe cargar el empleado a eliminar.", "eliminarEmpleado NoResultException");
             }
+            em.remove(empleado);
             em.flush();
             return new Respuesta(true, CodigoRespuesta.CORRECTO, "", "");
         } catch (Exception ex) {

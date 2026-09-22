@@ -65,7 +65,6 @@ public class CuentaBancaria implements Serializable {
 
     @Version
     @Basic(optional = false)
-    @NotNull
     @Column(name = "CBE_VERSION")
     private Long cbeVersion;
 
@@ -90,12 +89,16 @@ public class CuentaBancaria implements Serializable {
     }
 
     public void actualizar(CuentaBancariaDto cuentaBancariaDto) {
-        this.cbeAgencia = cuentaBancariaDto.getAgencia();
-        this.cbeAdicional = cuentaBancariaDto.getAdicional();
+        this.cbeAgencia = cuentaBancariaDto.getAgencia() != null ? cuentaBancariaDto.getAgencia().longValue() : null;
+        this.cbeAdicional = cuentaBancariaDto.getAdicional() != null ? cuentaBancariaDto.getAdicional().longValue() : null;
         this.cbeNumerocuenta = cuentaBancariaDto.getNumeroCuenta();
         this.cbeTipo = cuentaBancariaDto.getTipo();
         this.cbePrincipal = (cuentaBancariaDto.getPrincipal() != null && cuentaBancariaDto.getPrincipal()) ? "S" : "N";
         this.cbeVersion = cuentaBancariaDto.getVersion();
+        
+        if (cuentaBancariaDto.getBancoId() != null) {
+            this.banId = new Banco(cuentaBancariaDto.getBancoId());
+        }
     }
 
     public Long getCbeId() {

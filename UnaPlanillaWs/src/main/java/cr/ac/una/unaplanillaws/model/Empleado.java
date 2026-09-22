@@ -2,6 +2,7 @@ package cr.ac.una.unaplanillaws.model;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
@@ -92,21 +93,24 @@ public class Empleado implements Serializable {
     @Column(name = "EMP_VERSION")
     private Long version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empleado", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empId", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<CuentaBancaria> cuentaBancariaList;
     
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)
     private List<TipoPlanilla> tiposPlanilla;
 
     public Empleado() {
+        this.cuentaBancariaList = new ArrayList<>();
     }
 
     public Empleado(Long id) { 
         this.id = id;
+        this.cuentaBancariaList = new ArrayList<>();
     }
     
     public Empleado(EmpleadoDto empleadoDto) {
         this.id = empleadoDto.getId();
+        this.cuentaBancariaList = new ArrayList<>();
         actualizar(empleadoDto);
     }
 
@@ -117,13 +121,41 @@ public class Empleado implements Serializable {
         this.cedula = empleadoDto.getCedula();
         this.genero = empleadoDto.getGenero();
         this.correo = empleadoDto.getCorreo();
-        this.administrador = empleadoDto.getAdministrador()?"S":"N";
+        this.administrador = (empleadoDto.getAdministrador() != null && empleadoDto.getAdministrador()) ? "S" : "N";
         this.usuario = empleadoDto.getUsuario();
         this.clave = empleadoDto.getClave();
         this.fechaIngreso = empleadoDto.getFechaIngreso();
         this.fechaSalida = empleadoDto.getFechaSalida();
-        this.estado = empleadoDto.getActivo()?"A":"I";
+        this.estado = (empleadoDto.getActivo() != null && empleadoDto.getActivo()) ? "A" : "I";
         this.version = empleadoDto.getVersion();
+
+        if (this.cuentaBancariaList == null) {
+            this.cuentaBancariaList = new ArrayList<>();
+        }
+
+        if (empleadoDto.getCuentasBancariasEliminadas() != null) {
+            for (CuentaBancariaDto cuentaDto : empleadoDto.getCuentasBancariasEliminadas()) {
+                if (cuentaDto.getId() != null) {
+                    this.cuentaBancariaList.removeIf(c -> c.getCbeId() != null && c.getCbeId().equals(cuentaDto.getId()));
+                }
+            }
+        }
+
+        if (empleadoDto.getCuentasBancariasList() != null) {
+            List<CuentaBancaria> cuentasExistentes = new ArrayList<>(this.cuentaBancariaList);
+            for (CuentaBancariaDto cuentaDto : empleadoDto.getCuentasBancariasList()) {
+                if (cuentaDto.getId() != null) {
+                    cuentasExistentes.stream()
+                            .filter(c -> c.getCbeId() != null && c.getCbeId().equals(cuentaDto.getId()))
+                            .findFirst()
+                            .ifPresent(existing -> existing.actualizar(cuentaDto));
+                } else {
+                    CuentaBancaria nuevaCuenta = new CuentaBancaria(cuentaDto);
+                    nuevaCuenta.setEmpId(this);
+                    this.cuentaBancariaList.add(nuevaCuenta);
+                }
+            }
+        }
     }
 
     public Long getId() {

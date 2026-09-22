@@ -28,7 +28,7 @@ public class CuentaBancariaDto {
 
     private Boolean modificado;
 
-    private BancoDto banco;
+    private Long bancoId;
 
     public CuentaBancariaDto() {
         this.modificado = false;
@@ -44,7 +44,7 @@ public class CuentaBancariaDto {
         this.principal = cuentaBancaria.getCbePrincipal() != null && cuentaBancaria.getCbePrincipal().equals("S");
         this.version = cuentaBancaria.getCbeVersion();
         if (cuentaBancaria.getBanId() != null) {
-            this.banco = new BancoDto(cuentaBancaria.getBanId());
+            this.bancoId = new BancoDto(cuentaBancaria.getBanId()).getId();
         }
     }
 
@@ -112,12 +112,12 @@ public class CuentaBancariaDto {
         this.modificado = modificado;
     }
 
-    public BancoDto getBanco() {
-        return banco;
+    public Long getBancoId() {
+        return bancoId;
     }
 
-    public void setBanco(BancoDto banco) {
-        this.banco = banco;
+    public void setBancoId(Long bancoId) {
+        this.bancoId = bancoId;
     }
 
     @Override

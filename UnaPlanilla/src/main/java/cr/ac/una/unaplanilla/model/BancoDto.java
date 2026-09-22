@@ -139,8 +139,7 @@ public class BancoDto {
         return Objects.equals(this.id.get(), other.id.get());
     }
 
-    @Override
     public String toString() {
-        return "BancoDto{" + "id=" + id + ", nombre=" + nombre + '}';
+        return nombre.get();
     }
 }

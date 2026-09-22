@@ -64,6 +64,12 @@ public class EmpleadoDto {
         this.activo = empleado.getEstado().equals("A");
         this.version = empleado.getVersion();
         this.fecha = LocalDateTime.now();
+        
+        if (empleado.getCuentaBancariaList() != null) {
+            for (CuentaBancaria cuentaBancaria : empleado.getCuentaBancariaList()) {
+                this.cuentasBancariasList.add(new CuentaBancariaDto(cuentaBancaria));
+            }
+        }
     }
 
     public Long getId() { 
