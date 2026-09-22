@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package cr.ac.una.unaplanillaws.model;
 
 import java.io.Serializable;
@@ -23,18 +18,10 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.QueryHint;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlTransient;
-import java.math.BigInteger;
-import java.util.Date;
 
-/**
- *
- * @author Carlos
- */
 @Entity
 @Table(name = "PLAM_EMPLEADOS", schema = "UNA")
 @NamedQueries({
@@ -45,56 +32,69 @@ import java.util.Date;
 })
 public class Empleado implements Serializable {
 
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "EMP_FINGRESO")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date empFingreso;
-    @Column(name = "EMP_FSALIDA")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date empFsalida;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "EMP_VERSION")
-    private BigInteger empVersion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empId", fetch = FetchType.LAZY)
-    private List<CuentaBancaria> cuentaBancariaList;
-
     private static final long serialVersionUID = 1L;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    
     @Id
     @SequenceGenerator(name = "PLAM_EMPLEADOS_EMP_ID_GENERATOR", sequenceName = "una.PLAM_EMPLEADOS_SEQ01", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PLAM_EMPLEADOS_EMP_ID_GENERATOR")
     @Basic(optional = false)
     @Column(name = "EMP_ID")
     private Long id;
+    
     @Basic(optional = false)
     @Column(name = "EMP_NOMBRE")
     private String nombre;
+    
     @Basic(optional = false)
     @Column(name = "EMP_PAPELLIDO")
     private String primerApellido;
+    
     @Basic(optional = false)
     @Column(name = "EMP_SAPELLIDO")
     private String segundoApellido;
+    
     @Basic(optional = false)
     @Column(name = "EMP_CEDULA")
     private String cedula;
+    
     @Basic(optional = false)
     @Column(name = "EMP_GENERO")
     private String genero;
+    
     @Column(name = "EMP_CORREO")
     private String correo;
+    
     @Basic(optional = false)
     @Column(name = "EMP_ADMINISTRADOR")
     private String administrador;
+    
     @Column(name = "EMP_USUARIO")
     private String usuario;
+    
     @Column(name = "EMP_CLAVE")
     private String clave;
+    
     @Basic(optional = false)
     @Column(name = "EMP_ESTADO")
     private String estado;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "EMP_FINGRESO")
+    private LocalDate fechaIngreso;
+    
+    @Column(name = "EMP_FSALIDA")
+    private LocalDate fechaSalida;
+    
+    @Version
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "EMP_VERSION")
+    private Long version;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "empId", fetch = FetchType.LAZY)
+    private List<CuentaBancaria> cuentaBancariaList;
+    
     @ManyToMany(mappedBy = "empleados", fetch = FetchType.LAZY)
     private List<TipoPlanilla> tiposPlanilla;
 
@@ -246,6 +246,15 @@ public class Empleado implements Serializable {
         this.tiposPlanilla = tiposPlanilla;
     }
 
+    @XmlTransient
+    public List<CuentaBancaria> getCuentaBancariaList() {
+        return cuentaBancariaList;
+    }
+
+    public void setCuentaBancariaList(List<CuentaBancaria> cuentaBancariaList) {
+        this.cuentaBancariaList = cuentaBancariaList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -255,7 +264,6 @@ public class Empleado implements Serializable {
 
     @Override
     public boolean equals(Object object) {
-        // TODO: Warning - this method won't work in the case the id fields are not set
         if (!(object instanceof Empleado)) {
             return false;
         }
@@ -270,38 +278,4 @@ public class Empleado implements Serializable {
     public String toString() {
         return "cr.ac.una.unaplanilla.model.Empleado[ id=" + id + " ]";
     }
-
-    public Date getEmpFingreso() {
-        return empFingreso;
-    }
-
-    public void setEmpFingreso(Date empFingreso) {
-        this.empFingreso = empFingreso;
-    }
-
-    public Date getEmpFsalida() {
-        return empFsalida;
-    }
-
-    public void setEmpFsalida(Date empFsalida) {
-        this.empFsalida = empFsalida;
-    }
-
-    public BigInteger getEmpVersion() {
-        return empVersion;
-    }
-
-    public void setEmpVersion(BigInteger empVersion) {
-        this.empVersion = empVersion;
-    }
-
-    @XmlTransient
-    public List<CuentaBancaria> getCuentaBancariaList() {
-        return cuentaBancariaList;
-    }
-
-    public void setCuentaBancariaList(List<CuentaBancaria> cuentaBancariaList) {
-        this.cuentaBancariaList = cuentaBancariaList;
-    }
-    
 }
