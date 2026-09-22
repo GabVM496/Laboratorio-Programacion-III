@@ -25,10 +25,15 @@ import java.util.logging.Logger;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -81,9 +86,35 @@ public class EmpleadosController extends Controller implements Initializable {
     private MFXButton btnEliminar;
     @FXML
     private MFXButton btnGuardar;
-
+    @FXML
+    private Tab tbpControlEmpleados;
+    @FXML
+    private Tab tbpCuentaBancaria;
+    @FXML
+    private MFXTextField txtNumeroAgencia;
+    @FXML
+    private MFXTextField txtNumeroCuenta;
+    @FXML
+    private MFXComboBox<CuentaBancariaDto> cmbBanco;
+    @FXML
+    private CheckBox chkCuentaPrincipal;
+    @FXML
+    private MFXRadioButton rdbCuentaCorriente;
+    @FXML
+    private MFXRadioButton rdbCuentaAhorros;
+    @FXML
+    private TableView<CuentaBancariaDto> tbvCuentas;
+    @FXML
+    private TableColumn<CuentaBancariaDto, long> tbcNumeroCuenta;
+    @FXML
+    private TableColumn<CuentaBancariaDto, String> tbcNombreBanco;
+    @FXML
+    private TableColumn<CuentaBancariaDto, boolean> tbcEliminar;
+    
     private EmpleadoDto empleadoDto;
     private ObjectProperty<EmpleadoDto> empleadoProperty = new SimpleObjectProperty<>();
+    private CuentaBancariaDto cuentaBancariaDto;
+    private ObjectProperty<CuentaBancariaDto> cuentaBancariaProperty = new SimpleObjectProperty<>();
     private List<Node> requeridos = new ArrayList();
 
     /**
@@ -101,10 +132,23 @@ public class EmpleadosController extends Controller implements Initializable {
         txtCorreo.delegateSetTextFormatter(Formato.getInstance().maxLengthFormat(80));
         txtUsuario.delegateSetTextFormatter(Formato.getInstance().letrasFormat(15));
         txtClave.delegateSetTextFormatter(Formato.getInstance().maxLengthFormat(8));
-        empleadoDto = new EmpleadoDto();
+        this.empleadoDto = new EmpleadoDto();
         bindEmpleado();
+        bindCuentaBancaria();
         cargarValoresDefecto();
         indicarRequeridos();
+        
+        tbcNumeroCuenta.setCellValueFactory((cd) -> cd.getValue().getNumeroCuentaProperty());
+        tbcNombreBanco.setCellValueFactory((cd) -> cd.getValue().getNombreProperty());
+        tbcEliminar.setCellValueFactory((cd) -> new SimpleBooleanProperty(cd.getValue() != null));
+        tbcEliminar.setCellFactory((cd) -> new ButtonCell());
+        
+        tbvCuentas.getSelectionModel().selectedItemProperty().addListener((ov, oldValue, newValue) -> {
+            if (newValue != null) {
+                this.cuentaBancariaDto = newValue;
+                this.cuentaBancariaProperty.setValue(this.cuentaBancariaDto);
+            }
+        });
     }
 
     @Override
@@ -159,6 +203,28 @@ public class EmpleadosController extends Controller implements Initializable {
                     dtpFSalida.valueProperty().bindBidirectional(newVal.getFechaSalidaProperty());
                     chkActivo.selectedProperty().bindBidirectional(newVal.getActivoProperty());
                     BindingUtils.bindToggleGroupToProperty(tggGenero, newVal.getGeneroProperty());
+                }
+            });
+
+        } catch (Exception ex) {
+            new Mensaje().showModal(Alert.AlertType.ERROR, "Error al realizar el bindeo", getStage(),
+                    "Ocurrió un error al realizar el bindeo.");
+        }
+    }
+    
+    private void bindCuentaBancaria() {
+        try {
+            cuentaBancariaProperty.addListener((obs, oldVal, newVal) -> {
+                if (oldVal != null) {
+                    txtNumeroCuenta.textProperty().unbind();
+                    txtNumeroAgencia.textProperty().unbindBidirectional(oldVal.getAgenciaProperty());
+                }
+                if (newVal != null) {
+                    if (newVal.getIdProperty().get() != null
+                            && !newVal.getIdProperty().get().isBlank()) {
+                        txtIdEmpleado.textProperty().bind(newVal.getIdProperty());
+                    }
+                    txtNombreEmpleado.textProperty().bindBidirectional(newVal.getNombreProperty());
                 }
             });
 
@@ -320,6 +386,14 @@ public class EmpleadosController extends Controller implements Initializable {
             Logger.getLogger(EmpleadosController.class.getName()).log(Level.SEVERE, "Error guardando el empleado.", ex);
             new Mensaje().showModal(Alert.AlertType.ERROR, "Guardar Empleado", getStage(), "Ocurrio un error guardando el empleado.");
         }
+    }
+
+    @FXML
+    private void onKeyPressedTxtIdEmpleado(KeyEvent event) {
+    }
+
+    @FXML
+    private void selectionChangeTabCuenta(Event event) {
     }
 
 }
