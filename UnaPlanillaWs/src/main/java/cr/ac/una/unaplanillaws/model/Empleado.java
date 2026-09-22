@@ -101,7 +101,7 @@ public class Empleado implements Serializable {
     public Empleado() {
     }
 
-    public Empleado(Long id) {
+    public Empleado(Long id) { 
         this.id = id;
     }
     

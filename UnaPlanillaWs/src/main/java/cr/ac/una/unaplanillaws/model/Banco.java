@@ -28,8 +28,8 @@ import java.util.Objects;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Banco.findAll", query = "SELECT b FROM Banco b"),
-    @NamedQuery(name = "Banco.findById", query = "SELECT b FROM Banco b WHERE b.id = :id"),
-    @NamedQuery(name = "Banco.findByNombre", query = "SELECT b FROM Banco b WHERE b.nombre = :nombre")
+    @NamedQuery(name = "Banco.findByBanId", query = "SELECT b FROM Banco b WHERE b.banId = :banId"),
+    @NamedQuery(name = "Banco.findByBanNombre", query = "SELECT b FROM Banco b WHERE b.banNombre = :banNombre")
 })
 public class Banco implements Serializable {
 
@@ -40,120 +40,117 @@ public class Banco implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PLAM_BANCOS_BAN_ID_GENERATOR")
     @Basic(optional = false)
     @Column(name = "BAN_ID")
-    private Long id;
+    private Long banId;
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 80)
     @Column(name = "BAN_NOMBRE")
-    private String nombre;
+    private String banNombre;
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "BAN_REBAJOCOMISION")
-    private String rebajoComision;
+    private String banRebajocomision;
 
     @Basic(optional = false)
     @NotNull
     @Column(name = "BAN_COMISIONTRAN")
-    private Long comisionTransferencia;
+    private Long banComisiontran;
 
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 1)
     @Column(name = "BAN_ESTADO")
-    private String estado;
+    private String banEstado;
 
-    @Version
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "BAN_VERSION")
-    private Long version;
+@Version
+@Column(name = "BAN_VERSION")
+private Long banVersion;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "banco", fetch = FetchType.LAZY)
-    private List<CuentaBancaria> cuentasBancarias = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "banId", fetch = FetchType.LAZY)
+    private List<CuentaBancaria> cuentaBancariaList = new ArrayList<>();
 
     public Banco() {
     }
 
-    public Banco(Long id) {
-        this.id = id;
+    public Banco(Long banId) {
+        this.banId = banId;
     }
 
     public Banco(BancoDto bancoDto) {
-        this.id = bancoDto.getId();
+        this.banId = bancoDto.getId();
         actualizar(bancoDto);
     }
 
     public void actualizar(BancoDto bancoDto) {
-        this.nombre = bancoDto.getNombre();
-        this.rebajoComision = (bancoDto.getCobraComision() != null && bancoDto.getCobraComision()) ? "E" : "M";
-        this.comisionTransferencia = bancoDto.getComision();
-        this.estado = (bancoDto.getActivo() != null && bancoDto.getActivo()) ? "A" : "I";
-        this.version = bancoDto.getVersion();
+        this.banNombre = bancoDto.getNombre();
+        this.banRebajocomision = bancoDto.getRebajoComision();
+        this.banComisiontran = bancoDto.getComision();
+        this.banEstado = (bancoDto.getActivo() != null && bancoDto.getActivo()) ? "A" : "I";
     }
 
-    public Long getId() {
-        return id;
+    public Long getBanId() {
+        return banId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setBanId(Long banId) {
+        this.banId = banId;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getBanNombre() {
+        return banNombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setBanNombre(String banNombre) {
+        this.banNombre = banNombre;
     }
 
-    public String getRebajoComision() {
-        return rebajoComision;
+    public String getBanRebajocomision() {
+        return banRebajocomision;
     }
 
-    public void setRebajoComision(String rebajoComision) {
-        this.rebajoComision = rebajoComision;
+    public void setBanRebajocomision(String banRebajocomision) {
+        this.banRebajocomision = banRebajocomision;
     }
 
-    public Long getComisionTransferencia() {
-        return comisionTransferencia;
+    public Long getBanComisiontran() {
+        return banComisiontran;
     }
 
-    public void setComisionTransferencia(Long comisionTransferencia) {
-        this.comisionTransferencia = comisionTransferencia;
+    public void setBanComisiontran(Long banComisiontran) {
+        this.banComisiontran = banComisiontran;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getBanEstado() {
+        return banEstado;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setBanEstado(String banEstado) {
+        this.banEstado = banEstado;
     }
 
-    public Long getVersion() {
-        return version;
+    public Long getBanVersion() {
+        return banVersion;
     }
 
-    public void setVersion(Long version) {
-        this.version = version;
+    public void setBanVersion(Long banVersion) {
+        this.banVersion = banVersion;
     }
 
     @XmlTransient
-    public List<CuentaBancaria> getCuentasBancarias() {
-        return cuentasBancarias;
+    public List<CuentaBancaria> getCuentaBancariaList() {
+        return cuentaBancariaList;
     }
 
-    public void setCuentasBancarias(List<CuentaBancaria> cuentasBancarias) {
-        this.cuentasBancarias = cuentasBancarias;
+    public void setCuentaBancariaList(List<CuentaBancaria> cuentaBancariaList) {
+        this.cuentaBancariaList = cuentaBancariaList;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(banId);
     }
 
     @Override
@@ -165,11 +162,11 @@ public class Banco implements Serializable {
             return false;
         }
         Banco other = (Banco) obj;
-        return Objects.equals(this.id, other.id);
+        return Objects.equals(this.banId, other.banId);
     }
 
     @Override
     public String toString() {
-        return "cr.ac.una.unaplanillaws.model.Banco[ id=" + id + " ]";
+        return "cr.ac.una.unaplanillaws.model.Banco[ banId=" + banId + " ]";
     }
 }

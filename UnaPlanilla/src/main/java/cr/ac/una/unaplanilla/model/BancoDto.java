@@ -3,10 +3,8 @@ package cr.ac.una.unaplanilla.model;
 import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -16,7 +14,7 @@ public class BancoDto {
     private StringProperty id;
     private StringProperty nombre;
     private ObjectProperty<String> rebajoComision;
-    private DoubleProperty comisionTransferencia;
+    private ObjectProperty<Long> comision;
     private BooleanProperty activo;
     private Long version;
     private Boolean modificado;
@@ -24,8 +22,8 @@ public class BancoDto {
     public BancoDto() {
         this.id = new SimpleStringProperty("");
         this.nombre = new SimpleStringProperty("");
-        this.rebajoComision = new SimpleObjectProperty("E");
-        this.comisionTransferencia = new SimpleDoubleProperty(0.0);
+        this.rebajoComision = new SimpleObjectProperty<>("E");
+        this.comision = new SimpleObjectProperty<>(0L);
         this.activo = new SimpleBooleanProperty(true);
         this.modificado = false;
     }
@@ -39,7 +37,11 @@ public class BancoDto {
     }
 
     public void setId(Long id) {
-        this.id.set(id.toString());
+        if (id != null) {
+            this.id.set(id.toString());
+        } else {
+            this.id.set("");
+        }
     }
 
     public String getNombre() {
@@ -58,12 +60,12 @@ public class BancoDto {
         this.rebajoComision.set(rebajoComision);
     }
 
-    public Double getComisionTransferencia() {
-        return comisionTransferencia.get();
+    public Long getComision() {
+        return comision.get();
     }
 
-    public void setComisionTransferencia(Double comisionTransferencia) {
-        this.comisionTransferencia.set(comisionTransferencia);
+    public void setComision(Long comision) {
+        this.comision.set(comision);
     }
 
     public Boolean getActivo() {
@@ -90,8 +92,8 @@ public class BancoDto {
     }
 
     @JsonbTransient
-    public DoubleProperty getComisionTransferenciaProperty() {
-        return comisionTransferencia;
+    public ObjectProperty<Long> getComisionProperty() {
+        return comision;
     }
 
     @JsonbTransient
@@ -141,5 +143,4 @@ public class BancoDto {
     public String toString() {
         return "BancoDto{" + "id=" + id + ", nombre=" + nombre + '}';
     }
-
 }

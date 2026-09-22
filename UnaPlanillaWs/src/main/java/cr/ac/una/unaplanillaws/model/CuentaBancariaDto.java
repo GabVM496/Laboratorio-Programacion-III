@@ -36,15 +36,15 @@ public class CuentaBancariaDto {
 
     public CuentaBancariaDto(CuentaBancaria cuentaBancaria) {
         this();
-        this.id = cuentaBancaria.getId();
-        this.agencia = cuentaBancaria.getAgencia();
-        this.adicional = cuentaBancaria.getAdicional();
-        this.numeroCuenta = cuentaBancaria.getNumeroCuenta();
-        this.tipo = cuentaBancaria.getTipo();
-        this.principal = cuentaBancaria.getPrincipal() != null && cuentaBancaria.getPrincipal().equals("S");
-        this.version = cuentaBancaria.getVersion();
-        if (cuentaBancaria.getBanco() != null) {
-            this.banco = new BancoDto(cuentaBancaria.getBanco());
+        this.id = cuentaBancaria.getCbeId();
+        this.agencia = cuentaBancaria.getCbeAgencia();
+        this.adicional = cuentaBancaria.getCbeAdicional();
+        this.numeroCuenta = cuentaBancaria.getCbeNumerocuenta();
+        this.tipo = cuentaBancaria.getCbeTipo();
+        this.principal = cuentaBancaria.getCbePrincipal() != null && cuentaBancaria.getCbePrincipal().equals("S");
+        this.version = cuentaBancaria.getCbeVersion();
+        if (cuentaBancaria.getBanId() != null) {
+            this.banco = new BancoDto(cuentaBancaria.getBanId());
         }
     }
 

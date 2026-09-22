@@ -14,7 +14,10 @@ public class BancoDto {
     @Size(min = 1, max = 80)
     private String nombre;
 
-    private Boolean cobraComision;
+    @NotNull
+    @NotEmpty
+    @Size(min = 1, max = 1)
+    private String rebajoComision;
 
     @NotNull
     private Long comision;
@@ -31,12 +34,12 @@ public class BancoDto {
 
     public BancoDto(Banco banco) {
         this();
-        this.id = banco.getId();
-        this.nombre = banco.getNombre();
-        this.cobraComision = banco.getRebajoComision() != null && banco.getRebajoComision().equals("E");
-        this.comision = banco.getComisionTransferencia();
-        this.activo = banco.getEstado() != null && banco.getEstado().equals("A");
-        this.version = banco.getVersion();
+        this.id = banco.getBanId();
+        this.nombre = banco.getBanNombre();
+        this.rebajoComision = banco.getBanRebajocomision();
+        this.comision = banco.getBanComisiontran();
+        this.activo = banco.getBanEstado() != null && banco.getBanEstado().equals("A");
+        this.version = banco.getBanVersion();
     }
 
     public Long getId() {
@@ -55,12 +58,12 @@ public class BancoDto {
         this.nombre = nombre;
     }
 
-    public Boolean getCobraComision() {
-        return cobraComision;
+    public String getRebajoComision() {
+        return rebajoComision;
     }
 
-    public void setCobraComision(Boolean cobraComision) {
-        this.cobraComision = cobraComision;
+    public void setRebajoComision(String rebajoComision) {
+        this.rebajoComision = rebajoComision;
     }
 
     public Long getComision() {

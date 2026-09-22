@@ -26,6 +26,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.util.StringConverter;
 
 public class BancosController extends Controller implements Initializable {
 
@@ -50,7 +51,7 @@ public class BancosController extends Controller implements Initializable {
 
     private BancoDto bancoDto;
     private ObjectProperty<BancoDto> bancoProperty = new SimpleObjectProperty<>();
-    private List<Node> requeridos = new ArrayList();
+    private List<Node> requeridos = new ArrayList<>();
 
     @Override
     public void initialize() {
@@ -62,15 +63,16 @@ public class BancosController extends Controller implements Initializable {
         txtComision.delegateSetTextFormatter(Formato.getInstance().integerFormat());
         bancoDto = new BancoDto();
         bindBanco();
-        cargarValoresDefecto();
         indicarRequeridos();
+        cargarValoresDefecto();
     }
 
     private void cargarValoresDefecto() {
         bancoDto = new BancoDto();
         bancoDto.setActivo(Boolean.TRUE);
-        bancoDto.setCobraComision(Boolean.TRUE);
+        bancoDto.setRebajoComision("E");
         bancoProperty.setValue(bancoDto);
+        chkCobraComision.setSelected(true);
         validarComision();
         txtNombreBanco.requestFocus();
     }
@@ -86,14 +88,33 @@ public class BancosController extends Controller implements Initializable {
                 if (oldVal != null) {
                     txtNombreBanco.textProperty().unbindBidirectional(oldVal.getNombreProperty());
                     txtComision.textProperty().unbindBidirectional(oldVal.getComisionProperty());
-                    chkCobraComision.selectedProperty().unbindBidirectional(oldVal.getCobraComisionProperty());
                     chkActivo.selectedProperty().unbindBidirectional(oldVal.getActivoProperty());
                 }
                 if (newVal != null) {
                     txtNombreBanco.textProperty().bindBidirectional(newVal.getNombreProperty());
-                    txtComision.textProperty().bindBidirectional(newVal.getComisionProperty());
-                    chkCobraComision.selectedProperty().bindBidirectional(newVal.getCobraComisionProperty());
+
+                    txtComision.textProperty().bindBidirectional(newVal.getComisionProperty(), new StringConverter<Long>() {
+                        @Override
+                        public String toString(Long object) {
+                            return object == null ? "" : String.valueOf(object);
+                        }
+
+                        @Override
+                        public Long fromString(String string) {
+                            if (string == null || string.isBlank()) {
+                                return 0L;
+                            }
+                            try {
+                                return Long.valueOf(string);
+                            } catch (NumberFormatException e) {
+                                return 0L;
+                            }
+                        }
+                    });
+
                     chkActivo.selectedProperty().bindBidirectional(newVal.getActivoProperty());
+
+                    chkCobraComision.setSelected("E".equals(newVal.getRebajoComision()));
                 }
             });
         } catch (Exception ex) {
@@ -104,10 +125,12 @@ public class BancosController extends Controller implements Initializable {
 
     private void validarComision() {
         if (chkCobraComision.isSelected()) {
-            requeridos.addAll(Arrays.asList(txtComision));
+            if (!requeridos.contains(txtComision)) {
+                requeridos.add(txtComision);
+            }
             txtComision.setDisable(false);
         } else {
-            requeridos.removeAll(Arrays.asList(txtComision));
+            requeridos.remove(txtComision);
             txtComision.clear();
             txtComision.setDisable(true);
         }
@@ -116,10 +139,9 @@ public class BancosController extends Controller implements Initializable {
     @FXML
     private void onKeyPressedTxtNombreBanco(KeyEvent event) {
         if (event.getCode() == KeyCode.ENTER && !txtNombreBanco.getText().isBlank()) {
-            cargarBanco(Long.valueOf(txtNombreBanco.getText())); 
         }
     }
-    
+
     private void cargarBanco(Long id) {
         try {
             BancoService bancoService = new BancoService();
@@ -127,8 +149,8 @@ public class BancosController extends Controller implements Initializable {
             if (respuesta.getEstado()) {
                 this.bancoDto = (BancoDto) respuesta.getResultado("Banco");
                 this.bancoProperty.setValue(this.bancoDto);
+                chkCobraComision.setSelected("E".equals(this.bancoDto.getRebajoComision()));
                 validarComision();
-                validarRequeridos();
             } else {
                 new Mensaje().showModal(Alert.AlertType.ERROR, "Buscar Banco", getStage(), respuesta.getMensaje());
             }
@@ -137,11 +159,11 @@ public class BancosController extends Controller implements Initializable {
             new Mensaje().showModal(Alert.AlertType.ERROR, "Buscar Banco", getStage(), "Ocurrió un error buscando el banco.");
         }
     }
-    
+
     public String validarRequeridos() {
         Boolean validos = true;
         String invalidos = "";
-        
+
         for (Node node : requeridos) {
             if (node instanceof MFXTextField && (((MFXTextField) node).getText() == null || ((MFXTextField) node).getText().isBlank())) {
                 if (validos) {
@@ -152,7 +174,7 @@ public class BancosController extends Controller implements Initializable {
                 validos = false;
             }
         }
-        
+
         if (validos) {
             return "";
         } else {
@@ -162,6 +184,9 @@ public class BancosController extends Controller implements Initializable {
 
     @FXML
     private void onActionChkCobraComision(ActionEvent event) {
+        if (bancoDto != null) {
+            bancoDto.setRebajoComision(chkCobraComision.isSelected() ? "E" : "M");
+        }
         validarComision();
     }
 
@@ -175,7 +200,6 @@ public class BancosController extends Controller implements Initializable {
     @FXML
     private void onActionBtnBuscar(ActionEvent event) {
         BusquedaController busquedaController = (BusquedaController) FlowController.getInstance().getController("BusquedaView");
-        busquedaController.busquedaBancos();
         FlowController.getInstance().goViewInWindowModal("BusquedaView", getStage(), true);
         BancoDto ban = (BancoDto) busquedaController.getResultado();
         if (ban != null) {
@@ -187,7 +211,7 @@ public class BancosController extends Controller implements Initializable {
     private void onActionBtnEliminar(ActionEvent event) {
         try {
             if (this.bancoDto.getId() == null) {
-                new Mensaje().showModal(Alert.AlertType.ERROR, "Guardar Banco", getStage(), "Favor consultar el banco a eliminar.");
+                new Mensaje().showModal(Alert.AlertType.ERROR, "Eliminar Banco", getStage(), "Favor consultar el banco a eliminar.");
             } else {
                 BancoService bancoService = new BancoService();
                 Respuesta respuesta = bancoService.eliminarBanco(this.bancoDto.getId());
@@ -207,6 +231,8 @@ public class BancosController extends Controller implements Initializable {
     @FXML
     private void onActionBtnGuardar(ActionEvent event) {
         try {
+            bancoDto.setNombre(txtNombreBanco.getText());
+
             String invalidos = validarRequeridos();
             if (!invalidos.isEmpty()) {
                 new Mensaje().showModal(Alert.AlertType.ERROR, "Guardar banco", getStage(), invalidos);
@@ -216,10 +242,10 @@ public class BancosController extends Controller implements Initializable {
                 if (!respuesta.getEstado()) {
                     new Mensaje().showModal(Alert.AlertType.ERROR, "Guardar banco", getStage(), respuesta.getMensaje());
                 } else {
-                    this.bancoDto = (BancoDto)respuesta.getResultado("Banco");
+                    this.bancoDto = (BancoDto) respuesta.getResultado("Banco");
                     this.bancoProperty.set(this.bancoDto);
+                    chkCobraComision.setSelected("E".equals(this.bancoDto.getRebajoComision()));
                     validarComision();
-                    validarRequeridos();
                     new Mensaje().showModal(Alert.AlertType.INFORMATION, "Guardar Banco", getStage(), "El banco se guardó correctamente.");
                 }
             }
@@ -228,5 +254,4 @@ public class BancosController extends Controller implements Initializable {
             new Mensaje().showModal(Alert.AlertType.ERROR, "Guardar Banco", getStage(), "Ocurrio un error guardando el banco.");
         }
     }
-
 }
