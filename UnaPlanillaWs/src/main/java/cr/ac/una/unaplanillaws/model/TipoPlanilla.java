@@ -3,6 +3,7 @@ package cr.ac.una.unaplanillaws.model;
 import java.io.Serializable;
 import java.util.List;
 import jakarta.persistence.Basic;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,6 +21,7 @@ import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Cacheable(false)
 @Table(name = "PLAM_TIPOPLANILLAS", schema = "UNA")
 @NamedQueries({
     @NamedQuery(name = "TipoPlanilla.findAll", query = "SELECT t FROM TipoPlanilla t"),
@@ -66,7 +68,6 @@ public class TipoPlanilla implements Serializable {
 
     @Version
     @Basic(optional = false)
-    @NotNull
     @Column(name = "TPLA_VERSION")
     private Long version;
 

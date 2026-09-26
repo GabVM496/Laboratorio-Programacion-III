@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.Basic;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlTransient;
 
 @Entity
+@Cacheable(false)
 @Table(name = "PLAM_EMPLEADOS", schema = "UNA")
 @NamedQueries({
     @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e"),
@@ -89,7 +91,6 @@ public class Empleado implements Serializable {
     
     @Version
     @Basic(optional = false)
-    @NotNull
     @Column(name = "EMP_VERSION")
     private Long version;
 
@@ -153,6 +154,19 @@ public class Empleado implements Serializable {
                     CuentaBancaria nuevaCuenta = new CuentaBancaria(cuentaDto);
                     nuevaCuenta.setEmpId(this);
                     this.cuentaBancariaList.add(nuevaCuenta);
+                }
+            }
+        }
+        
+        boolean yaHayPrincipal = false;
+        if (this.cuentaBancariaList != null) {
+            for (CuentaBancaria c : this.cuentaBancariaList) {
+                if ("S".equals(c.getCbePrincipal())) {
+                    if (yaHayPrincipal) {
+                        c.setCbePrincipal("N");
+                    } else {
+                        yaHayPrincipal = true;
+                    }
                 }
             }
         }

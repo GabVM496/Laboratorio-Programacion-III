@@ -51,32 +51,16 @@ public class Formato {
     }
 
     public TextFormatter twoDecimalFormat() {
+        Pattern validDoubleText = Pattern.compile("^[0-9]*(\\.[0-9]{0,2})?$");
         TextFormatter numericFormat = new TextFormatter<>(c
                 -> {
             if (c.getControlNewText().isEmpty()) {
                 return c;
             }
-            if (c.getControlNewText().contains(",")) {
-                ParsePosition parsePosition = new ParsePosition(0);
-                Object object = decimalFormat.parse(c.getControlNewText(), parsePosition);
-
-                if (object == null || parsePosition.getIndex() < c.getControlNewText().length()) {
-                    return null;
-                } else {
-                    Pattern validDoubleText = Pattern.compile("^[0-9]*+(\\.[0-9]{0,2})?$");
-                    if (validDoubleText.matcher(c.getControlNewText().replace(",", "")).matches()) {
-                        return c;
-                    } else {
-                        return null;
-                    }
-                }
+            if (validDoubleText.matcher(c.getControlNewText()).matches()) {
+                return c;
             } else {
-                Pattern validDoubleText = Pattern.compile("^[0-9]*+(\\.[0-9]{0,2})?$");
-                if (validDoubleText.matcher(c.getControlNewText().replace(",", "")).matches()) {
-                    return c;
-                } else {
-                    return null;
-                }
+                return null;
             }
         });
         return numericFormat;

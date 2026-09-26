@@ -3,8 +3,10 @@ package cr.ac.una.unaplanilla.model;
 import jakarta.json.bind.annotation.JsonbTransient;
 import java.util.Objects;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -14,7 +16,7 @@ public class BancoDto {
     private StringProperty id;
     private StringProperty nombre;
     private ObjectProperty<String> rebajoComision;
-    private ObjectProperty<Long> comision;
+    private DoubleProperty comision;
     private BooleanProperty activo;
     private Long version;
     private Boolean modificado;
@@ -23,7 +25,7 @@ public class BancoDto {
         this.id = new SimpleStringProperty("");
         this.nombre = new SimpleStringProperty("");
         this.rebajoComision = new SimpleObjectProperty<>("E");
-        this.comision = new SimpleObjectProperty<>(0L);
+        this.comision = new SimpleDoubleProperty();
         this.activo = new SimpleBooleanProperty(true);
         this.modificado = false;
     }
@@ -60,11 +62,11 @@ public class BancoDto {
         this.rebajoComision.set(rebajoComision);
     }
 
-    public Long getComision() {
+    public Double getComision() {
         return comision.get();
     }
 
-    public void setComision(Long comision) {
+    public void setComision(Double comision) {
         this.comision.set(comision);
     }
 
@@ -92,7 +94,7 @@ public class BancoDto {
     }
 
     @JsonbTransient
-    public ObjectProperty<Long> getComisionProperty() {
+    public DoubleProperty getComisionProperty() {
         return comision;
     }
 

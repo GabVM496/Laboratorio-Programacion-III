@@ -60,6 +60,26 @@ public class BancoService {
             return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO, "Ocurrio un error al consultar los bancos.", "getBancos " + ex.getMessage());
         }
     }
+    
+    public Respuesta getBancos(String nombre, String rebajo, String estado) {
+        try {
+            Query query = em.createNamedQuery("Banco.findByNombreRebajoEstado", Banco.class);
+            query.setParameter("nombre", nombre);
+            query.setParameter("rebajo", rebajo);
+            query.setParameter("estado", estado);
+
+            List<Banco> bancos = query.getResultList();
+            List<BancoDto> bancosDto = new ArrayList<>();
+            for (Banco banco : bancos) {
+                bancosDto.add(new BancoDto(banco));
+            }
+            return new Respuesta(true, CodigoRespuesta.CORRECTO, "", "", "Bancos", bancosDto);
+        } catch (Exception ex) {
+            LOG.log(Level.SEVERE, "Ocurrió un error al consultar los bancos.", ex);
+            return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO,
+                    "Ocurrió un error al consultar los bancos.", "getBancos " + ex.getMessage());
+        }
+    }
 
     public Respuesta guardarBanco(BancoDto bancoDto) {
         try {
@@ -89,20 +109,32 @@ public class BancoService {
             if (id != null && id > 0) {
                 banco = em.find(Banco.class, id);
                 if (banco == null) {
-                    return new Respuesta(false, CodigoRespuesta.ERROR_NOENCONTRADO, "No se encontró el banco a eliminar.", "eliminarBanco NoResultException");
+                    return new Respuesta(false, CodigoRespuesta.ERROR_NOENCONTRADO,
+                            "No se encontró el banco a eliminar.", "eliminarBanco NoResultException");
+                }
+                if (banco.getCuentaBancariaList() != null && !banco.getCuentaBancariaList().isEmpty()) {
+                    return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO,
+                            "No se puede eliminar el banco porque tiene cuentas bancarias asociadas.",
+                            "eliminarBanco tiene cuentas asociadas");
                 }
                 em.remove(banco);
             } else {
-                return new Respuesta(false, CodigoRespuesta.ERROR_NOENCONTRADO, "Debe cargar el banco a eliminar.", "eliminarBanco NoResultException");
+                return new Respuesta(false, CodigoRespuesta.ERROR_NOENCONTRADO,
+                        "Debe cargar el banco a eliminar.", "eliminarBanco NoResultException");
             }
             em.flush();
             return new Respuesta(true, CodigoRespuesta.CORRECTO, "", "");
         } catch (Exception ex) {
-            if (ex.getCause() != null && ex.getCause().getCause().getClass() == SQLIntegrityConstraintViolationException.class) {
-                return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO, "No se puede eliminar el banco porque tiene relaciones con otros registros.", "eliminarBanco " + ex.getMessage());
+            if (ex.getCause() != null && ex.getCause().getCause() != null
+                    && ex.getCause().getCause().getClass() == SQLIntegrityConstraintViolationException.class) {
+                return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO,
+                        "No se puede eliminar el banco porque tiene relaciones con otros registros.",
+                        "eliminarBanco " + ex.getMessage());
             }
-            LOG.log(Level.SEVERE, "Ocurrio un error al eliminar el banco.", ex);
-            return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO, "Ocurrio un error al eliminar el banco.", "eliminarBanco " + ex.getMessage());
+            LOG.log(Level.SEVERE, "Ocurrió un error al eliminar el banco.", ex);
+            return new Respuesta(false, CodigoRespuesta.ERROR_INTERNO,
+                    "Ocurrió un error al eliminar el banco.", "eliminarBanco " + ex.getMessage());
         }
     }
+    
 }

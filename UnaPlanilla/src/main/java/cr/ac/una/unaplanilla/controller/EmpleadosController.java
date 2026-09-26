@@ -149,9 +149,7 @@ public class EmpleadosController extends Controller implements Initializable {
 
         if (txtNumeroAgencia != null) txtNumeroAgencia.delegateSetTextFormatter(Formato.getInstance().integerFormat());
         if (txtNumeroCuenta != null) txtNumeroCuenta.delegateSetTextFormatter(Formato.getInstance().integerFormat());
-
-        cargarBancos(); 
-
+ 
         this.empleadoDto = new EmpleadoDto();
         bindEmpleado();
 
@@ -160,6 +158,8 @@ public class EmpleadosController extends Controller implements Initializable {
 
         cargarValoresDefecto();
         indicarRequeridos();
+        
+        cargarBancos();
 
         cmbBanco.setConverter(new StringConverter<BancoDto>() {
             @Override
@@ -421,30 +421,38 @@ public class EmpleadosController extends Controller implements Initializable {
     @FXML
     private void onActionBtnAgregarCuenta(ActionEvent event) {
         if (cmbBanco.getSelectionModel().getSelectedItem() == null) {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "Debe seleccionar un banco.");
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(),
+                    "Debe seleccionar un banco.");
             return;
         }
-
         if (txtNumeroCuenta.getText() == null || txtNumeroCuenta.getText().isBlank()) {
-            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "Debe ingresar el número de cuenta.");
+            new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(),
+                    "Debe ingresar el número de cuenta.");
             return;
         }
-
-        this.cuentaBancariaDto.setBancoId(cmbBanco.getSelectionModel().getSelectedItem().getId());
-
+        Long bancoIdSeleccionado = cmbBanco.getSelectionModel().getSelectedItem().getId();
+        this.cuentaBancariaDto.setBancoId(bancoIdSeleccionado);
+        if (Boolean.TRUE.equals(this.cuentaBancariaDto.getPrincipal())) {
+            for (CuentaBancariaDto c : tbvCuentas.getItems()) {
+                if (c != this.cuentaBancariaDto && Boolean.TRUE.equals(c.getPrincipal())) {
+                    c.setPrincipal(false);
+                    c.setModificado(true);
+                }
+            }
+        }
         boolean exists = tbvCuentas.getItems().contains(this.cuentaBancariaDto);
-
         if (exists) {
             this.cuentaBancariaDto.setModificado(true);
             tbvCuentas.refresh();
             limpiarCuentaBancaria();
         } else {
-            if (tbvCuentas.getItems().stream().anyMatch(c -> c.getNumeroCuenta().equals(this.cuentaBancariaDto.getNumeroCuenta()))) {
-                new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "El número de cuenta ya existe en la lista.");
+            boolean duplicada = tbvCuentas.getItems().stream().anyMatch(c -> c.getNumeroCuenta() != null && c.getNumeroCuenta().equals(this.cuentaBancariaDto.getNumeroCuenta()) && c.getBancoId() != null && c.getBancoId().equals(bancoIdSeleccionado));
+            if (duplicada) {
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Agregar Cuenta", getStage(), "El número de cuenta ya se encuentra en uso.");
                 return;
             }
             this.cuentaBancariaDto.setModificado(true);
-            tbvCuentas.getItems().add(this.cuentaBancariaDto); 
+            tbvCuentas.getItems().add(this.cuentaBancariaDto);
             tbvCuentas.refresh();
             limpiarCuentaBancaria();
         }
@@ -521,15 +529,43 @@ public class EmpleadosController extends Controller implements Initializable {
     private void selectionChangeTabCuenta(Event event) {
         if (tbpCuentaBancaria.isSelected()) {
             if (this.empleadoDto.getId() == null) {
-                new Mensaje().showModal(Alert.AlertType.WARNING, "Cuentas Bancarias", getStage(),
-                        "Debe cargar un empleado antes de gestionar cuentas bancarias.");
+                new Mensaje().showModal(Alert.AlertType.WARNING, "Cuentas Bancarias", getStage(), "Debe cargar un empleado antes de gestionar cuentas bancarias.");
                 tbpControlEmpleadosPane.getSelectionModel().select(tbpControlEmpleados);
+            } else {
+                cargarBancos();
             }
         }
     }
 
     @FXML
-    private void onKeyPressedTxtIdEmpleado(KeyEvent event) {
+    private void onActionBtnBuscarBanco(ActionEvent event) {
+        try {
+            cargarBancos();
+            BusquedaController busquedaController = (BusquedaController) FlowController.getInstance().getController("BusquedaView");
+            busquedaController.busquedaBancos();
+            FlowController.getInstance().goViewInWindowModal("BusquedaView", getStage(), true);
+
+            BancoDto bancoSeleccionado = (BancoDto) busquedaController.getResultado();
+            if (bancoSeleccionado != null) {
+                boolean estaEnCombo = false;
+                for (BancoDto b : cmbBanco.getItems()) {
+                    if (b.getId().equals(bancoSeleccionado.getId())) {
+                        cmbBanco.getSelectionModel().selectItem(b);
+                        estaEnCombo = true;
+                        break;
+                    }
+                }
+                if (!estaEnCombo) {
+                    cmbBanco.getItems().add(bancoSeleccionado);
+                    cmbBanco.getSelectionModel().selectItem(bancoSeleccionado);
+                }
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(EmpleadosController.class.getName())
+                    .log(Level.SEVERE, "Error buscando banco.", ex);
+            new Mensaje().showModal(Alert.AlertType.ERROR, "Buscar Banco", getStage(),
+                    "Ocurrió un error al buscar el banco.");
+        }
     }
 
     private class ButtonCell extends TableCell<CuentaBancariaDto, Boolean> {

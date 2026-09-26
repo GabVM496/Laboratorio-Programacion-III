@@ -63,6 +63,28 @@ public class BancoController {
             return Response.status(CodigoRespuesta.ERROR_INTERNO.getValue()).entity("Error obteniendo los bancos.").build();
         }
     }
+    
+    @GET
+    @Path("/{nombre}/{rebajo}/{estado}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBancos(@PathParam("nombre") String nombre, @PathParam("rebajo") String rebajo, @PathParam("estado") String estado) {
+        try {
+            Respuesta respuesta = bancoService.getBancos(nombre, rebajo, estado);
+            if (!respuesta.getEstado()) {
+                return Response.status(respuesta.getCodigoRespuesta().getValue())
+                        .entity(respuesta.getMensaje()).build();
+            }
+            return Response.ok(
+                    new GenericEntity<List<BancoDto>>(
+                            (List<BancoDto>) respuesta.getResultado("Bancos")
+                    ) {}
+            ).build();
+        } catch (Exception ex) {
+            Logger.getLogger(BancoController.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(CodigoRespuesta.ERROR_INTERNO.getValue())
+                    .entity("Error obteniendo los bancos.").build();
+        }
+    }
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)

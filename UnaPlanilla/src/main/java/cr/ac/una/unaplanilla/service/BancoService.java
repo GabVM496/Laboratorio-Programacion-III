@@ -49,6 +49,25 @@ public class BancoService {
             return new Respuesta(false, "Error obteniendo el banco.", "getBanco " + ex.getMessage());
         }
     }
+    
+    public Respuesta getBancos(String nombre, String rebajo, String estado) {
+        try {
+            Map<String, Object> parametros = new HashMap<>();
+            parametros.put("nombre", nombre);
+            parametros.put("rebajo", rebajo);
+            parametros.put("estado", estado);
+            Request request = new Request("Bancos", "/{nombre}/{rebajo}/{estado}", parametros);
+            request.get();
+            if (request.isError()) {
+                return new Respuesta(false, request.getError(), "");
+            }
+            List<BancoDto> bancos = (List<BancoDto>) request.readEntity(new GenericType<List<BancoDto>>() {});
+            return new Respuesta(true, "", "", "Bancos", bancos);
+        } catch (Exception ex) {
+            Logger.getLogger(BancoService.class.getName()).log(Level.SEVERE, "Error obteniendo bancos.", ex);
+            return new Respuesta(false, "Error obteniendo bancos.", "getBancos " + ex.getMessage());
+        }
+    }
 
     public Respuesta guardarBanco(BancoDto bancoDto) {
         try {

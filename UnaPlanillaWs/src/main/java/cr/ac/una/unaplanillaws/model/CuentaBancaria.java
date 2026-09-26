@@ -1,6 +1,7 @@
 package cr.ac.una.unaplanillaws.model;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,6 +22,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
+@Cacheable(false)
 @Table(name = "PLAM_CUENTASBANCARIAS", schema = "UNA")
 @XmlRootElement
 @NamedQueries({
@@ -68,11 +70,11 @@ public class CuentaBancaria implements Serializable {
     @Column(name = "CBE_VERSION")
     private Long cbeVersion;
 
-    @JoinColumn(name = "BAN_ID", referencedColumnName = "BAN_ID")
+    @JoinColumn(name = "CBE_IDBAN", referencedColumnName = "BAN_ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Banco banId;
 
-    @JoinColumn(name = "EMP_ID", referencedColumnName = "EMP_ID")
+    @JoinColumn(name = "CBE_IDEMP", referencedColumnName = "EMP_ID")
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private Empleado empId;
 

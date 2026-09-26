@@ -1,6 +1,7 @@
 package cr.ac.una.unaplanillaws.model;
 
 import jakarta.persistence.Basic;
+import jakarta.persistence.Cacheable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.NamedQueries;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.QueryHint;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -24,12 +26,19 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
+@Cacheable(false)
 @Table(name = "PLAM_BANCOS", schema = "UNA")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Banco.findAll", query = "SELECT b FROM Banco b"),
     @NamedQuery(name = "Banco.findByBanId", query = "SELECT b FROM Banco b WHERE b.banId = :banId"),
-    @NamedQuery(name = "Banco.findByBanNombre", query = "SELECT b FROM Banco b WHERE b.banNombre = :banNombre")
+    @NamedQuery(name = "Banco.findByBanNombre", query = "SELECT b FROM Banco b WHERE b.banNombre = :banNombre"),
+    @NamedQuery( name = "Banco.findByNombreRebajoEstado",
+        query = "SELECT b FROM Banco b "
+              + "WHERE UPPER(b.banNombre) LIKE :nombre "
+              + "AND (:rebajo = '%' OR b.banRebajocomision = :rebajo) "
+              + "AND (:estado = '%' OR b.banEstado = :estado)", hints = @QueryHint(name = "eclipselink.refresh", value = "true")
+    )
 })
 public class Banco implements Serializable {
 
@@ -57,7 +66,7 @@ public class Banco implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "BAN_COMISIONTRAN")
-    private Long banComisiontran;
+    private Double banComisiontran;
 
     @Basic(optional = false)
     @NotNull
@@ -65,9 +74,10 @@ public class Banco implements Serializable {
     @Column(name = "BAN_ESTADO")
     private String banEstado;
 
-@Version
-@Column(name = "BAN_VERSION")
-private Long banVersion;
+    @Version
+    @Basic(optional = false)
+    @Column(name = "BAN_VERSION")
+    private Long banVersion;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "banId", fetch = FetchType.LAZY)
     private List<CuentaBancaria> cuentaBancariaList = new ArrayList<>();
@@ -115,11 +125,11 @@ private Long banVersion;
         this.banRebajocomision = banRebajocomision;
     }
 
-    public Long getBanComisiontran() {
+    public Double getBanComisiontran() {
         return banComisiontran;
     }
 
-    public void setBanComisiontran(Long banComisiontran) {
+    public void setBanComisiontran(Double banComisiontran) {
         this.banComisiontran = banComisiontran;
     }
 

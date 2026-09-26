@@ -8,6 +8,7 @@ cr\ac\una\unaplanillaws\model\BancoDto.class
 cr\ac\una\unaplanillaws\model\EmpleadoDto.class
 cr\ac\una\unaplanillaws\model\Empleado.class
 cr\ac\una\unaplanillaws\service\CuentaBancariaService.class
+cr\ac\una\unaplanillaws\controller\BancoController$2.class
 cr\ac\una\unaplanillaws\JakartaRestConfiguration$1.class
 cr\ac\una\unaplanillaws\controller\CuentaBancariaController$1.class
 cr\ac\una\unaplanillaws\controller\EmpleadoController.class

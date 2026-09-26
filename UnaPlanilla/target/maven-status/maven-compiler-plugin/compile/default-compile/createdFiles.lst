@@ -21,6 +21,7 @@ cr\ac\una\unaplanilla\service\TipoPlanillaService$1.class
 cr\ac\una\unaplanilla\util\DragResizeMod.class
 cr\ac\una\unaplanilla\controller\BancosController$1.class
 cr\ac\una\unaplanilla\util\DragResizeMod$OnDragResizeEventListener.class
+cr\ac\una\unaplanilla\service\BancoService$2.class
 cr\ac\una\unaplanilla\util\Respuesta.class
 cr\ac\una\unaplanilla\util\DragResizeMod$S.class
 cr\ac\una\unaplanilla\controller\TiposPlanillaController$ButtonCell.class

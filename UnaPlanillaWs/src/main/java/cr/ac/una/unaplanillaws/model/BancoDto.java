@@ -20,7 +20,7 @@ public class BancoDto {
     private String rebajoComision;
 
     @NotNull
-    private Long comision;
+    private Double comision;
 
     private Boolean activo;
 
@@ -66,11 +66,11 @@ public class BancoDto {
         this.rebajoComision = rebajoComision;
     }
 
-    public Long getComision() {
+    public Double getComision() {
         return comision;
     }
 
-    public void setComision(Long comision) {
+    public void setComision(Double comision) {
         this.comision = comision;
     }
 

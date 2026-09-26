@@ -22,7 +22,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="root" minHeight="490.0" minWidth="710.0" prefHeight="497.0" prefWidth="710.0" styleClass="jfx-panelfondo" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.EmpleadosController">
+<AnchorPane id="AnchorPane" fx:id="root" minHeight="490.0" minWidth="710.0" prefHeight="497.0" prefWidth="710.0" styleClass="jfx-panelfondo" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.EmpleadosController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
@@ -109,23 +109,27 @@
                                        <children>
                                           <HBox spacing="10.0">
                                              <children>
-                                                <VBox spacing="10.0" HBox.hgrow="ALWAYS">
-                                                   <children>
-                                                      <MFXTextField fx:id="txtNumeroAgencia" floatingText="Numero de Agencia" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
-                                                      <MFXTextField fx:id="txtNumeroCuenta" floatingText="Numero de Cuenta" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
-                                                   </children>
-                                                </VBox>
-                                                <VBox spacing="30.0">
-                                                   <children>
-                                                      <MFXComboBox fx:id="cmbBanco" floatingText="Banco" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS" />
-                                                      <CheckBox fx:id="chkCuentaPrincipal" mnemonicParsing="false" text="Cuenta Principal" />
-                                                   </children>
-                                                </VBox>
+                                                <MFXTextField fx:id="txtNumeroAgencia" floatingText="Numero de Agencia" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
+                                                <MFXTextField fx:id="txtNumeroCuenta" floatingText="Numero de Cuenta" maxWidth="1.7976931348623157E308" prefHeight="22.0" prefWidth="440.0" />
                                              </children>
                                              <VBox.margin>
                                                 <Insets />
                                              </VBox.margin>
                                           </HBox>
+                                          <VBox spacing="30.0">
+                                             <children>
+                                                <HBox spacing="20.0" VBox.vgrow="ALWAYS">
+                                                   <children>
+                                                      <MFXComboBox fx:id="cmbBanco" floatingText="Banco" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                                      <MFXButton maxHeight="1.7976931348623157E308" onAction="#onActionBtnBuscarBanco" styleClass="jfx-btn-buscar" text="Buscar">
+                                                         <graphic>
+                                                            <ImageView fitHeight="30.0" fitWidth="30.0" pickOnBounds="true" preserveRatio="true" />
+                                                         </graphic>
+                                                      </MFXButton>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </VBox>
                                           <Label text="Tipo de Cuenta:" />
                                           <HBox alignment="CENTER_LEFT" spacing="20.0">
                                              <children>
@@ -135,6 +139,7 @@
                                                    </toggleGroup>
                                                 </MFXRadioButton>
                                                 <MFXRadioButton fx:id="rdbCuentaAhorros" text="Ahorros" toggleGroup="$tggTipoCuenta" />
+                                                <CheckBox fx:id="chkCuentaPrincipal" mnemonicParsing="false" text="Cuenta Principal" />
                                                 <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                                    <children>
                                                       <MFXButton fx:id="btnAgregarCuenta" onAction="#onActionBtnAgregarCuenta" prefHeight="30.0" prefWidth="100.0" styleClass="jfx-btn-nuevo" text="Agregar" />
