@@ -133,7 +133,7 @@ public class BusquedaController extends Controller implements Initializable {
             tbvResultados.getItems().clear();
             
             TableColumn<EmpleadoDto, String> tbcId = new TableColumn<>("Id");
-            tbcId.setPrefWidth(0);
+            tbcId.setPrefWidth(100);
             tbcId.setCellValueFactory(cd -> cd.getValue().getIdProperty());
             
             TableColumn<EmpleadoDto, String> tbcCedula = new TableColumn<>("Cédula");
@@ -237,7 +237,7 @@ public class BusquedaController extends Controller implements Initializable {
             tbvResultados.getItems().clear();
             
             TableColumn<TipoPlanillaDto, String> tbcId = new TableColumn<>("Id");
-            tbcId.setPrefWidth(0);
+            tbcId.setPrefWidth(100);
             tbcId.setCellValueFactory(cd -> cd.getValue().getIdProperty());
             
             TableColumn<TipoPlanillaDto, String> tbcCodigo = new TableColumn<>("Código");
@@ -321,7 +321,7 @@ public class BusquedaController extends Controller implements Initializable {
             tbvResultados.getItems().clear();
 
             TableColumn<BancoDto, String> tbcId = new TableColumn<>("Id");
-            tbcId.setPrefWidth(60);
+            tbcId.setPrefWidth(100);
             tbcId.setCellValueFactory(cd -> cd.getValue().getIdProperty());
 
             TableColumn<BancoDto, String> tbcNombre = new TableColumn<>("Nombre");
@@ -378,6 +378,97 @@ public class BusquedaController extends Controller implements Initializable {
                 }
 
                 Respuesta respuesta = service.getBancos(nombre.toUpperCase(), rebajo, estado);
+                if (respuesta.getEstado()) {
+                    ObservableList<BancoDto> bancos = FXCollections.observableList(
+                            (List<BancoDto>) respuesta.getResultado("Bancos"));
+                    tbvResultados.setItems(bancos);
+                    tbvResultados.refresh();
+                } else {
+                    new Mensaje().showModal(Alert.AlertType.ERROR, "Consultar bancos", getStage(), respuesta.getMensaje());
+                }
+            });
+        } catch (Exception ex) {
+            Logger.getLogger(BusquedaController.class.getName()).log(Level.SEVERE, "Error consultando los bancos.", ex);
+            new Mensaje().showModal(Alert.AlertType.ERROR, "Consultar bancos", getStage(), "Ocurrió un error consultando los bancos.");
+        }
+    }
+    
+    public void busquedaBancosActivos() {
+        try {
+            lblTitulo.setText("Búsqueda de Bancos");
+
+            MFXTextField txtNombre = new MFXTextField();
+            txtNombre.setFloatMode(FloatMode.INLINE);
+            txtNombre.setMaxWidth(1.7976931348623157E308);
+            txtNombre.setFloatingText("Nombre");
+            txtNombre.delegateSetTextFormatter(Formato.getInstance().letrasFormat(80));
+            txtNombre.setOnKeyPressed(keyEnter);
+
+            MFXComboBox<String> cmbRebajo = new MFXComboBox<>();
+            cmbRebajo.setFloatMode(FloatMode.INLINE);
+            cmbRebajo.setMaxWidth(1.7976931348623157E308);
+            cmbRebajo.setFloatingText("Quién cobra comisión");
+            cmbRebajo.setItems(FXCollections.observableArrayList("Todos", "Empleado", "Empresa"));
+            cmbRebajo.selectFirst();
+
+            vbxParametros.getChildren().clear();
+            vbxParametros.getChildren().add(txtNombre);
+            vbxParametros.getChildren().add(cmbRebajo);
+
+            tbvResultados.getColumns().clear();
+            tbvResultados.getItems().clear();
+
+            TableColumn<BancoDto, String> tbcId = new TableColumn<>("Id");
+            tbcId.setPrefWidth(100);
+            tbcId.setCellValueFactory(cd -> cd.getValue().getIdProperty());
+
+            TableColumn<BancoDto, String> tbcNombre = new TableColumn<>("Nombre");
+            tbcNombre.setPrefWidth(220);
+            tbcNombre.setCellValueFactory(cd -> cd.getValue().getNombreProperty());
+
+            TableColumn<BancoDto, String> tbcRebajo = new TableColumn<>("Rebaja comisión");
+            tbcRebajo.setPrefWidth(140);
+            tbcRebajo.setCellValueFactory(cd -> {
+                String r = cd.getValue().getRebajoComision();
+                return new javafx.beans.property.SimpleStringProperty(
+                        "E".equals(r) ? "Empleado" : ("M".equals(r) ? "Empresa" : r)
+                );
+            });
+
+            TableColumn<BancoDto, String> tbcEstado = new TableColumn<>("Estado");
+            tbcEstado.setPrefWidth(100);
+            tbcEstado.setCellValueFactory(cd -> {
+                Boolean activo = cd.getValue().getActivo();
+                return new javafx.beans.property.SimpleStringProperty(
+                        activo != null && activo ? "Activo" : "Inactivo"
+                );
+            });
+
+            TableColumn<BancoDto, String> tbcComision = new TableColumn<>("Comisión");
+            tbcComision.setPrefWidth(100);
+            tbcComision.setCellValueFactory(cd -> cd.getValue().getComisionProperty().asString());
+
+            tbvResultados.getColumns().add(tbcId);
+            tbvResultados.getColumns().add(tbcNombre);
+            tbvResultados.getColumns().add(tbcRebajo);
+            tbvResultados.getColumns().add(tbcEstado);
+            tbvResultados.getColumns().add(tbcComision);
+            tbvResultados.refresh();
+
+            btnFiltrar.setOnAction((ActionEvent event) -> {
+                tbvResultados.getItems().clear();
+                BancoService service = new BancoService();
+
+                String nombre = "%" + (txtNombre.getText() != null ? txtNombre.getText() : "") + "%";
+
+                String rebajo;
+                switch (cmbRebajo.getValue() != null ? cmbRebajo.getValue() : "Todos") {
+                    case "Empleado" -> rebajo = "E";
+                    case "Empresa"  -> rebajo = "M";
+                    default         -> rebajo = "%";
+                }
+
+                Respuesta respuesta = service.getBancos(nombre.toUpperCase(), rebajo, "A");
                 if (respuesta.getEstado()) {
                     ObservableList<BancoDto> bancos = FXCollections.observableList(
                             (List<BancoDto>) respuesta.getResultado("Bancos"));

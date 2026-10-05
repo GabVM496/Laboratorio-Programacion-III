@@ -542,7 +542,7 @@ public class EmpleadosController extends Controller implements Initializable {
         try {
             cargarBancos();
             BusquedaController busquedaController = (BusquedaController) FlowController.getInstance().getController("BusquedaView");
-            busquedaController.busquedaBancos();
+            busquedaController.busquedaBancosActivos();
             FlowController.getInstance().goViewInWindowModal("BusquedaView", getStage(), true);
 
             BancoDto bancoSeleccionado = (BancoDto) busquedaController.getResultado();

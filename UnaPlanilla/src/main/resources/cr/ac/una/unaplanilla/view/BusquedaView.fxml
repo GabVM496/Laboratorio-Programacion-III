@@ -9,19 +9,19 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane id="AnchorPane" fx:id="root" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" stylesheets="@style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.BusquedaController">
+<AnchorPane id="AnchorPane" fx:id="root" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="1000.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" stylesheets="@style.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="cr.ac.una.unaplanilla.controller.BusquedaController">
    <children>
       <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <VBox prefHeight="400.0" prefWidth="180.0" spacing="2.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" HBox.hgrow="SOMETIMES">
+            <VBox prefHeight="400.0" prefWidth="250.0" spacing="2.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" HBox.hgrow="SOMETIMES">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="180.0" styleClass="jfx-titulo-label-fondo" text="Parámetros" wrapText="true" VBox.vgrow="ALWAYS" />
-                  <ScrollPane prefHeight="295.0" prefWidth="180.0" VBox.vgrow="ALWAYS">
+                  <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" prefHeight="50.0" prefWidth="180.0" styleClass="jfx-titulo-label-fondo" text="Parámetros" wrapText="true" VBox.vgrow="ALWAYS" />
+                  <ScrollPane prefHeight="295.0" prefWidth="2507.0" VBox.vgrow="ALWAYS">
                      <padding>
                         <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
                      </padding>
                      <content>
-                        <VBox fx:id="vbxParametros" prefHeight="1000.0" prefWidth="163.0" spacing="15.0">
+                        <VBox fx:id="vbxParametros" alignment="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="15.0">
                            <padding>
                               <Insets left="5.0" right="5.0" top="10.0" />
                            </padding></VBox>
@@ -36,7 +36,11 @@
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" HBox.hgrow="ALWAYS">
                <children>
                   <Label fx:id="lblTitulo" alignment="CENTER" contentDisplay="CENTER" prefHeight="50.0" prefWidth="2000.0" styleClass="jfx-titulo-label-fondo" text="Búsqueda" wrapText="true" VBox.vgrow="ALWAYS" />
-                  <TableView fx:id="tbvResultados" onMousePressed="#OnMousePressedTbvResultados" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                  <ScrollPane fitToHeight="true" fitToWidth="true" VBox.vgrow="ALWAYS">
+                     <content>
+                        <TableView fx:id="tbvResultados" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onMousePressed="#OnMousePressedTbvResultados" />
+                     </content>
+                  </ScrollPane>
                   <HBox alignment="CENTER_RIGHT" prefHeight="30.0" prefWidth="200.0" style="-fx-padding: 0 0 0 0;" styleClass="jfx-contenedor-principal" VBox.vgrow="NEVER">
                      <children>
                         <MFXButton fx:id="btnAceptar" buttonType="RAISED" onAction="#onActionBtnAceptar" prefHeight="30.0" prefWidth="150.0" styleClass="jfx-menubutton2" text="Aceptar" />
