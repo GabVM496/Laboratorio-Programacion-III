@@ -7,6 +7,7 @@ cr\ac\una\unaplanillaws\model\TipoPlanilla.class
 cr\ac\una\unaplanillaws\model\BancoDto.class
 cr\ac\una\unaplanillaws\model\EmpleadoDto.class
 cr\ac\una\unaplanillaws\model\Empleado.class
+cr\ac\una\unaplanillaws\controller\SecurityFilter.class
 cr\ac\una\unaplanillaws\service\CuentaBancariaService.class
 cr\ac\una\unaplanillaws\controller\BancoController$2.class
 cr\ac\una\unaplanillaws\JakartaRestConfiguration$1.class
@@ -18,11 +19,14 @@ cr\ac\una\unaplanillaws\model\TipoPlanillaDto.class
 cr\ac\una\unaplanillaws\util\Respuesta.class
 cr\ac\una\unaplanillaws\ConstraintViolationExceptionMapper.class
 cr\ac\una\unaplanillaws\util\CodigoRespuesta.class
+cr\ac\una\unaplanillaws\util\JwTokenHelper.class
 cr\ac\una\unaplanillaws\controller\CuentaBancariaController.class
 cr\ac\una\unaplanillaws\model\CuentaBancaria.class
 cr\ac\una\unaplanillaws\controller\JsonbContextResolver.class
 cr\ac\una\unaplanillaws\controller\BancoController$1.class
+cr\ac\una\unaplanillaws\util\Secure.class
 cr\ac\una\unaplanillaws\service\BancoService.class
+cr\ac\una\unaplanillaws\controller\SecurityFilter$1.class
 cr\ac\una\unaplanillaws\service\EmpleadoService.class
 cr\ac\una\unaplanillaws\controller\PlanillaController$1.class
 cr\ac\una\unaplanillaws\service\TipoPlanillaService.class

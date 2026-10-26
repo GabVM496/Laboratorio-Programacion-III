@@ -32,6 +32,7 @@ public class EmpleadoDto {
     private Long version;
     private Boolean modificado;
     private LocalDateTime fecha;
+    private String token;
     
     private List<CuentaBancariaDto> cuentasBancariasList;
     private List<CuentaBancariaDto> cuentasBancariasEliminadas;
@@ -183,6 +184,14 @@ public class EmpleadoDto {
 
     public void setCuentasBancariasEliminadas(List<CuentaBancariaDto> cuentasBancariasEliminadas) {
         this.cuentasBancariasEliminadas = cuentasBancariasEliminadas;
+    }
+    
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

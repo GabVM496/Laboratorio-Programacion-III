@@ -3,7 +3,11 @@ package cr.ac.una.unaplanillaws.controller;
 import cr.ac.una.unaplanillaws.model.EmpleadoDto;
 import cr.ac.una.unaplanillaws.service.EmpleadoService;
 import cr.ac.una.unaplanillaws.util.CodigoRespuesta;
+import cr.ac.una.unaplanillaws.util.JwTokenHelper;
 import cr.ac.una.unaplanillaws.util.Respuesta;
+import cr.ac.una.unaplanillaws.util.Secure;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.ejb.EJB;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -13,32 +17,61 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.GenericEntity;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.SecurityContext;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Secure
 @Path("/Empleados")
+@Tag(name = "Empleados", description = "Operaciones sobre empleados")
+@SecurityRequirement(name = "jwt-auth")
 public class EmpleadoController {
 
     @EJB
     EmpleadoService empleadoService;
 
+    @Context
+    SecurityContext securityContext;
+    
     @GET
     @Path("/usuario/{usuario}/{clave}")
     public Response validarUsuario(@PathParam("usuario") String usuario, @PathParam("clave") String clave) {
         try {
             Respuesta respuesta = empleadoService.validarUsuario(usuario, clave);
             if (!respuesta.getEstado()) {
-                return Response.status(respuesta.getCodigoRespuesta().getValue()).entity(respuesta.getMensaje()).build();
-            } else {
-                return Response.ok(respuesta.getResultado("Empleado")).build();
+                return Response.status(respuesta.getCodigoRespuesta().getValue())
+                        .entity(respuesta.getMensaje()).build();
             }
+            EmpleadoDto empleadoDto = (EmpleadoDto) respuesta.getResultado("Empleado");
+            empleadoDto.setToken(JwTokenHelper.getInstance().generatePrivateKey(usuario));
+            
+            return Response.ok(empleadoDto).build();
         } catch (Exception ex) {
             Logger.getLogger(EmpleadoController.class.getName()).log(Level.SEVERE, null, ex);
             return Response.status(CodigoRespuesta.ERROR_INTERNO.getValue()).entity("Error validando el usuario.").build();
+        }
+    }
+    
+    @GET
+    @Path("/renovar")
+    public Response renovarToken() {
+        try {
+            String usuario = securityContext.getUserPrincipal().getName();
+            if (usuario != null && !usuario.isBlank()) {
+                return Response.ok(JwTokenHelper.getInstance()
+                        .generatePrivateKey(usuario)).build();
+            }
+            return Response.status(CodigoRespuesta.ERROR_PERMISOS.getValue())
+                    .entity("No se pudo renovar el token.").build();
+        } catch (Exception ex) {
+            Logger.getLogger(EmpleadoController.class.getName()).log(Level.SEVERE, null, ex);
+            return Response.status(CodigoRespuesta.ERROR_INTERNO.getValue())
+                    .entity("Error renovando el token.").build();
         }
     }
 

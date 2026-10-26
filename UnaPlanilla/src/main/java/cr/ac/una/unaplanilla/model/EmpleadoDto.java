@@ -33,6 +33,7 @@ public class EmpleadoDto {
     private Boolean modificado;
     private ObservableList<CuentaBancariaDto> cuentasBancariasList;
     private List<CuentaBancariaDto> cuentasBancariasEliminadas;
+    private String token;
 
     public EmpleadoDto() {
         this.id = new SimpleStringProperty("");
@@ -256,6 +257,14 @@ public class EmpleadoDto {
 
     public void setCuentasBancariasEliminadas(List<CuentaBancariaDto> cuentasBancariasEliminadas) {
         this.cuentasBancariasEliminadas = cuentasBancariasEliminadas;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override

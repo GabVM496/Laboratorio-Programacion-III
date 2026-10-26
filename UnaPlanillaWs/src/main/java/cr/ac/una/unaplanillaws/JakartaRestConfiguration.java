@@ -19,7 +19,8 @@ public class JakartaRestConfiguration extends ResourceConfig {
 
     public JakartaRestConfiguration() {
         super();
-        packages("cr.ac.una.unaplanillaws.controller");
+        packages("cr.ac.una.unaplanillaws.controller",
+                 "io.swagger.v3.jaxrs2.integration.resources");
         registerCustomProviders();
     }
     
